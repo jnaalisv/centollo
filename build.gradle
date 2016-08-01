@@ -3,11 +3,20 @@ plugins {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
+}
+
+ext {
+    springVersion = "4.3.2.RELEASE"
+    junitVersion = "4.12"
 }
 
 dependencies {
 
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.springframework:spring-test:$springVersion"
+    testCompile "org.jnaalisv:spring-mockmvc-builder:1.0"
 }
 
 wrapper {
