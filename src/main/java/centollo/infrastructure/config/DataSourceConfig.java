@@ -11,7 +11,7 @@ import javax.sql.DataSource;
 public class DataSourceConfig {
 
     @Bean(destroyMethod = "close")
-    public DataSource dataSource() {
+    public DataSource hikariDataSource() {
         HikariConfig dataSourceConfig = new HikariConfig();
         dataSourceConfig.setDriverClassName("org.h2.Driver");
         dataSourceConfig.setJdbcUrl("jdbc:h2:mem:db");
