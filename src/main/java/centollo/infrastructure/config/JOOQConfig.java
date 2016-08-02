@@ -10,10 +10,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.LazyConnectionDataSourceProxy;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.jdbc.datasource.init.DataSourceInitializer;
 import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 
+import javax.inject.Named;
 import javax.sql.DataSource;
 
 @Configuration
@@ -21,15 +23,14 @@ import javax.sql.DataSource;
 @Import(DataSourceConfig.class)
 public class JOOQConfig {
 
-//    @Bean
-//    public LazyConnectionDataSourceProxy lazyConnectionDataSource(DataSource hikariDataSource) {
-//        return new LazyConnectionDataSourceProxy(hikariDataSource);
-//    }
-//
+    @Bean
+    public LazyConnectionDataSourceProxy lazyConnectionDataSource(@Named("hikariDataSource") DataSource hikariDataSource) {
+        return new LazyConnectionDataSourceProxy(hikariDataSource);
+    }
 
     @Bean
-    public TransactionAwareDataSourceProxy transactionAwareDataSource(DataSource hikariDataSource) {
-        return new TransactionAwareDataSourceProxy(hikariDataSource);
+    public TransactionAwareDataSourceProxy transactionAwareDataSource(LazyConnectionDataSourceProxy lazyConnectionDataSource) {
+        return new TransactionAwareDataSourceProxy(lazyConnectionDataSource);
     }
 
     @Bean
