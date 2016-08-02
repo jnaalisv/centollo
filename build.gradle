@@ -11,7 +11,9 @@ ext {
     springVersion = "4.3.2.RELEASE"
     jacksonVersion = "2.7.3"
     servletApiVersion = "3.1.0"
+
     junitVersion = "4.12"
+    assertJVersion = "3.4.1"
 }
 
 dependencies {
@@ -21,6 +23,7 @@ dependencies {
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 
     testCompile "junit:junit:$junitVersion"
+    testCompile "org.assertj:assertj-core:$assertJVersion"
     testCompile "org.springframework:spring-test:$springVersion"
     testCompile "org.jnaalisv:spring-mockmvc-builder:1.1"
 }
