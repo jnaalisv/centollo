@@ -1,22 +1,32 @@
 package centollo.web.interfaces;
 
+import centollo.model.application.ProductService;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Arrays;
+import javax.inject.Inject;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
 public class ProductsController {
 
-    public ProductsController() {
+    private final ProductService productService;
 
+    @Inject
+    public ProductsController(final ProductService productService) {
+        this.productService = productService;
     }
 
-    @GetMapping
+    @GetMapping(produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
     public List<ProductDTO> productsQuery(String query) {
-        return Arrays.asList(new ProductDTO(query));
+        return productService
+                .searchProducts(query)
+                .stream()
+                .map(ProductDTO::new)
+                .collect(Collectors.toList());
     }
 }

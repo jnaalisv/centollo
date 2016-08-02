@@ -20,12 +20,14 @@ ext {
 }
 
 dependencies {
+    compile "javax.inject:javax.inject:1"
     compile "javax.servlet:javax.servlet-api:$servletApiVersion"
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
     compile "org.springframework:spring-webmvc:$springVersion"
     compile "org.springframework:spring-context:$springVersion"
     compile "org.springframework:spring-tx:$springVersion"
     compile "org.springframework:spring-orm:$springVersion"
+    compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final"
     compile "org.hibernate:hibernate-core:$hibernateVersion"
     compile "com.zaxxer:HikariCP:$hikariCPVersion"
 
