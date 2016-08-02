@@ -16,7 +16,7 @@ dependencies {
 
     testCompile "junit:junit:$junitVersion"
     testCompile "org.springframework:spring-test:$springVersion"
-    testCompile "org.jnaalisv:spring-mockmvc-builder:1.0"
+    testCompile "org.jnaalisv:spring-mockmvc-builder:1.1"
 }
 
 wrapper {
