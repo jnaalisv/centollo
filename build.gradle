@@ -13,13 +13,16 @@ ext {
     hikariCPVersion = "2.4.7"
     jacksonVersion = "2.7.3"
     servletApiVersion = "3.1.0"
+    slf4jVersion = "1.7.21"
+    logbackVersion = "1.1.7"
+    groovyVersion = "2.4.1"
     h2Version = "1.4.191"
-
     junitVersion = "4.12"
     assertJVersion = "3.4.1"
 }
 
 dependencies {
+    compile "org.slf4j:slf4j-api:$slf4jVersion"
     compile "javax.inject:javax.inject:1"
     compile "javax.servlet:javax.servlet-api:$servletApiVersion"
     compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
@@ -31,6 +34,9 @@ dependencies {
     compile "org.hibernate:hibernate-core:$hibernateVersion"
     compile "com.zaxxer:HikariCP:$hikariCPVersion"
 
+    runtime "ch.qos.logback:logback-classic:$logbackVersion"
+    runtime "org.codehaus.groovy:groovy:$groovyVersion"
+    runtime "org.slf4j:jcl-over-slf4j:$slf4jVersion"
     runtime "com.h2database:h2:$h2Version"
 
     testCompile "junit:junit:$junitVersion"
