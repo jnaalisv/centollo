@@ -9,10 +9,16 @@ repositories {
 
 ext {
     springVersion = "4.3.2.RELEASE"
+    jacksonVersion = "2.7.3"
+    servletApiVersion = "3.1.0"
     junitVersion = "4.12"
 }
 
 dependencies {
+
+    compile "javax.servlet:javax.servlet-api:$servletApiVersion"
+    compile "org.springframework:spring-webmvc:$springVersion"
+    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
 
     testCompile "junit:junit:$junitVersion"
     testCompile "org.springframework:spring-test:$springVersion"
