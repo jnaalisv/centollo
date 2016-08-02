@@ -11,6 +11,13 @@ public class Product {
 
     private String name;
 
+    public Product() { /*hibernate*/}
+
+    public Product(long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public String getName() {
         return name;
     }

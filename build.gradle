@@ -10,6 +10,7 @@ repositories {
 ext {
     springVersion = "4.3.2.RELEASE"
     hibernateVersion = "5.2.1.Final"
+    jooqVersion = "3.8.4"
     hikariCPVersion = "2.4.7"
     jacksonVersion = "2.7.3"
     servletApiVersion = "3.1.0"
@@ -32,6 +33,7 @@ dependencies {
     compile "org.springframework:spring-orm:$springVersion"
     compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final"
     compile "org.hibernate:hibernate-core:$hibernateVersion"
+    compile "org.jooq:jooq:$jooqVersion"
     compile "com.zaxxer:HikariCP:$hikariCPVersion"
 
     runtime "ch.qos.logback:logback-classic:$logbackVersion"
