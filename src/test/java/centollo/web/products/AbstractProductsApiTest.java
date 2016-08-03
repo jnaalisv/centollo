@@ -1,6 +1,7 @@
 package centollo.web.products;
 
 import centollo.model.config.ModelConfiguration;
+import centollo.model.domain.ProductType;
 import centollo.web.AbstractWebApiTest;
 import centollo.web.config.WebConfiguration;
 import centollo.web.interfaces.ProductDTO;
@@ -48,12 +49,13 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
                 .expect200()
                 .responseBodyAsListOf(ProductDTO.class);
 
-        assertThat(products.size()).isEqualTo(7);
+        assertThat(products.size()).isEqualTo(8);
 
         products.forEach(
                 p -> {
                     assertThat(p.name).isNotEmpty();
                     assertThat(p.productCode).isNotEmpty();
+                    assertThat(p.productType).isNotNull();
                 }
         );
     }
@@ -66,6 +68,7 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
                 .responseBodyAs(ProductDTO.class);
 
         assertThat(kona.productCode).isEqualTo("K2");
+        assertThat(kona.productType).isEqualTo(ProductType.BEANS);
     }
 
     @Test

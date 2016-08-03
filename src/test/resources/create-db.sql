@@ -4,5 +4,6 @@ create table Product (
     id bigint not null,
     productCode varchar(255),
     name varchar(255),
+    productType varchar(255),
     primary key (id)
 );

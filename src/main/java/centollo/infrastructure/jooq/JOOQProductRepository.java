@@ -2,8 +2,10 @@ package centollo.infrastructure.jooq;
 
 import centollo.model.domain.Product;
 import centollo.model.domain.ProductRepository;
+import centollo.model.domain.ProductType;
 import org.jooq.DSLContext;
-import org.jooq.Record3;
+import org.jooq.Record4;
+import org.jooq.RecordMapper;
 import org.jooq.ResultQuery;
 import org.springframework.stereotype.Repository;
 
@@ -24,32 +26,37 @@ public class JOOQProductRepository implements ProductRepository {
         this.jooq = jooq;
     }
 
+    private static final RecordMapper<Record4<Long, String, String, String>, Product> productRecordMapper
+            = record -> new Product(record.value1(), record.value2(), record.value3(), ProductType.valueOf(record.value4()));
+
     @Override
     public List<Product> searchProducts(String query) {
-        ResultQuery<Record3<Long, String, String>> sqlQuery = jooq
+        ResultQuery<Record4<Long, String, String, String>> sqlQuery = jooq
                 .select(
                         field("id", Long.class),
                         field("productCode", String.class),
-                        field("name", String.class)
+                        field("name", String.class),
+                        field("productType", String.class)
                 )
                 .from(table("product"))
                 .where(field("name").like("%"+query+"%"));
 
-        return sqlQuery.fetchInto(Product.class);
+        return sqlQuery.fetch(productRecordMapper);
     }
 
     @Override
     public Optional<Product> findBy(String productCode) {
-        ResultQuery<Record3<Long, String, String>> sqlQuery = jooq
+        ResultQuery<Record4<Long, String, String, String>> sqlQuery = jooq
                 .select(
                         field("id", Long.class),
                         field("productCode", String.class),
-                        field("name", String.class)
+                        field("name", String.class),
+                        field("productType", String.class)
                 )
                 .from(table("product"))
                 .where(field("productCode").eq(productCode));
 
-        Product productOrNull = sqlQuery.fetchOneInto(Product.class);
+        Product productOrNull = sqlQuery.fetchOne(productRecordMapper);
 
         return Optional.ofNullable(productOrNull);
     }
