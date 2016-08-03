@@ -1,12 +1,16 @@
 package centollo.infrastructure.config;
 
-import com.zaxxer.hikari.HikariConfig;
-import com.zaxxer.hikari.HikariDataSource;
+import javax.sql.DataSource;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.jdbc.datasource.init.DataSourceInitializer;
+import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.sql.DataSource;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
 @Configuration
 @EnableTransactionManagement
@@ -20,5 +24,15 @@ public class DataSourceConfig {
         dataSourceConfig.setUsername("sa");
         dataSourceConfig.setPassword("");
         return new HikariDataSource(dataSourceConfig);
+    }
+
+    @Bean
+    public DataSourceInitializer dataSourceInitializer(DataSource hikariDataSource) {
+        DataSourceInitializer initializer = new DataSourceInitializer();
+        initializer.setDataSource(hikariDataSource);
+        ResourceDatabasePopulator populator = new ResourceDatabasePopulator();
+        populator.addScript(new ClassPathResource("create-db.sql"));
+        initializer.setDatabasePopulator(populator);
+        return initializer;
     }
 }

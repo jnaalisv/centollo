@@ -6,6 +6,7 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
 @Entity // required by Hibernate
 @Table(name = "product") // required by SansOrm
@@ -13,6 +14,10 @@ public class Product {
 
     @Id // required by Hibernate
     private long id;
+
+    @Version
+    @Column(name = "version")
+    private long version = 0l;
 
     @Column(name = "productCode") // required by SansOrm
     private String productCode;
@@ -46,5 +51,9 @@ public class Product {
 
     public long getId() {
         return id;
+    }
+
+    public Long getVersion() {
+        return version;
     }
 }

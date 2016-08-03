@@ -1,17 +1,18 @@
 package centollo.web.products;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+import java.util.List;
+
+import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+
 import centollo.model.config.ModelConfiguration;
 import centollo.model.domain.ProductType;
 import centollo.web.AbstractWebApiTest;
 import centollo.web.config.WebConfiguration;
 import centollo.web.interfaces.ProductDTO;
-import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-
-import java.util.List;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Sql({"classpath:products.sql"})
 @ContextConfiguration(classes = {ModelConfiguration.class, WebConfiguration.class })
@@ -119,5 +120,31 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
                 .responseBodyAs(ProductDTO.class);
         
         assertThat(updatedCompakE8.name).isEqualTo("Fancy New E8!");
+    }
+
+    @Test
+    public void assertOptimisticLocking() {
+
+        ProductDTO compakE8 = httpGet("/products/CE8")
+                .acceptApplicationJson()
+                .expect200()
+                .responseBodyAs(ProductDTO.class);
+
+        assertThat(compakE8.version).isEqualTo(0);
+
+        ProductDTO updatedCompakE8 = httpPut("/products/CE8")
+                .contentTypeApplicationJson()
+                .content(compakE8)
+                .acceptApplicationJson()
+                .expect200()
+                .responseBodyAs(ProductDTO.class);
+
+        assertThat(updatedCompakE8.version).isEqualTo(1);
+
+        httpPut("/products/CE8")
+                .contentTypeApplicationJson()
+                .content(compakE8)
+                .acceptApplicationJson()
+                .expect409();
     }
 }

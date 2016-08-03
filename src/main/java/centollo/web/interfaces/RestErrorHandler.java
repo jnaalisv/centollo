@@ -1,11 +1,14 @@
 package centollo.web.interfaces;
 
-import centollo.model.application.NotFoundException;
+import javax.servlet.http.HttpServletRequest;
+
+import org.hibernate.StaleStateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -13,7 +16,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import javax.servlet.http.HttpServletRequest;
+import centollo.model.application.NotFoundException;
 
 @ControllerAdvice
 public final class RestErrorHandler extends ResponseEntityExceptionHandler {
@@ -45,9 +48,15 @@ public final class RestErrorHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<String> handleAuthenticationException(NotFoundException ex, HttpServletRequest httpRequest) {
+    public ResponseEntity<String> handleNotFoundException(NotFoundException ex, HttpServletRequest httpRequest) {
         logBadRequest(httpRequest, ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(HibernateOptimisticLockingFailureException.class)
+    public ResponseEntity<String> handleHibernateOptimisticLockingFailureException(HibernateOptimisticLockingFailureException ex, HttpServletRequest httpRequest) {
+        logBadRequest(httpRequest, ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(Exception.class)
@@ -55,6 +64,7 @@ public final class RestErrorHandler extends ResponseEntityExceptionHandler {
         logError(httpRequest, getCause(exception));
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
     private static void logBadRequest(HttpServletRequest httpRequest, Throwable throwable) {
         String restRequest = buildRequestString(httpRequest);
         logger.info(restRequest, throwable);

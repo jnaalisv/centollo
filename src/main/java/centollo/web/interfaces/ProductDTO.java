@@ -1,9 +1,10 @@
 package centollo.web.interfaces;
 
-import centollo.model.domain.Product;
-import centollo.model.domain.ProductType;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import centollo.model.domain.Product;
+import centollo.model.domain.ProductType;
 
 public class ProductDTO {
 
@@ -11,6 +12,7 @@ public class ProductDTO {
     public String productCode;
     public ProductType productType;
     public long id;
+    public long version = 0L;
 
     @JsonCreator
     public ProductDTO(@JsonProperty("id") long id,
@@ -28,5 +30,6 @@ public class ProductDTO {
         this.name = product.getName();
         this.productCode = product.getProductCode();
         this.productType = product.getProductType();
+        this.version = product.getVersion();
     }
 }
