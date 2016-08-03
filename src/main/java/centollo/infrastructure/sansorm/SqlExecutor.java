@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 
 import static com.zaxxer.sansorm.SqlClosureElf.quietClose;
 
@@ -21,12 +22,14 @@ public class SqlExecutor {
         this.transactionAwareDataSource = transactionAwareDataSource;
     }
 
-    public <T> T getObjectById(Class<T> type, Object... ids) {
-        return execute(connection -> OrmElf.objectById(connection, type, ids));
+    public <T> Optional<T> getObjectById(Class<T> type, Object... ids) {
+        T result = execute(connection -> OrmElf.objectById(connection, type, ids));
+        return Optional.ofNullable(result);
     }
 
-    public <T> T objectFromClause(Class<T> type, String clause, Object... args) {
-        return execute(connection -> OrmElf.objectFromClause(connection, type, clause, args));
+    public <T> Optional<T> objectFromClause(Class<T> type, String clause, Object... args) {
+        T result = execute(connection -> OrmElf.objectFromClause(connection, type, clause, args));
+        return Optional.ofNullable(result);
     }
 
     public <T> T insertObject(T object) {
