@@ -13,6 +13,8 @@ import org.springframework.web.context.WebApplicationContext;
 import javax.inject.Inject;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebAppConfiguration
@@ -34,5 +36,13 @@ public abstract class AbstractWebApiTest {
 
     protected MockMvcRequestBuilder httpGet(String urlTemplate, Object... urlVars) {
         return new MockMvcRequestBuilder(mockMvc, objectMapper, get(urlTemplate, urlVars));
+    }
+
+    protected MockMvcRequestBuilder httpPost(String urlTemplate, Object... urlVars) {
+        return new MockMvcRequestBuilder(mockMvc, objectMapper, post(urlTemplate, urlVars));
+    }
+
+    protected MockMvcRequestBuilder httpPut(String urlTemplate, Object... urlVars) {
+        return new MockMvcRequestBuilder(mockMvc, objectMapper, put(urlTemplate, urlVars));
     }
 }
