@@ -7,20 +7,20 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-@Entity
-@Table(name = "product")
+@Entity // required by Hibernate
+@Table(name = "product") // required by SansOrm
 public class Product {
 
-    @Id
+    @Id // required by Hibernate
     private long id;
 
-    @Column(name = "productCode")
+    @Column(name = "productCode") // required by SansOrm
     private String productCode;
 
-    @Column(name = "name")
+    @Column(name = "name") // required by SansOrm
     private String name;
 
-    @Enumerated(EnumType.STRING)
+    @Enumerated(EnumType.STRING) // required by Hibernate, SansOrm
     private ProductType productType;
 
     public Product() { /*hibernate*/}
