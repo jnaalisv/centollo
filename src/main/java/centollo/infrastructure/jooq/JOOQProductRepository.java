@@ -3,14 +3,13 @@ package centollo.infrastructure.jooq;
 import centollo.model.domain.Product;
 import centollo.model.domain.ProductRepository;
 import org.jooq.DSLContext;
-import org.jooq.Record2;
-import org.jooq.Result;
+import org.jooq.Record3;
 import org.jooq.ResultQuery;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.Optional;
 
 import static org.jooq.impl.DSL.field;
 import static org.jooq.impl.DSL.table;
@@ -27,16 +26,31 @@ public class JOOQProductRepository implements ProductRepository {
 
     @Override
     public List<Product> searchProducts(String query) {
-        ResultQuery sqlQuery = jooq
-                .select(field("p.name", String.class), field("p.id", Long.class))
-                .from(table("product p"))
-                .where(field("p.name").like("%"+query+"%"));
+        ResultQuery<Record3<Long, String, String>> sqlQuery = jooq
+                .select(
+                        field("id", Long.class),
+                        field("productCode", String.class),
+                        field("name", String.class)
+                )
+                .from(table("product"))
+                .where(field("name").like("%"+query+"%"));
 
-        Result<Record2<String, Long>> result = sqlQuery.fetch();
+        return sqlQuery.fetchInto(Product.class);
+    }
 
-        return result
-                .stream()
-                .map(r -> new Product(r.value2(), r.value1()))
-                .collect(Collectors.toList());
+    @Override
+    public Optional<Product> findBy(String productCode) {
+        ResultQuery<Record3<Long, String, String>> sqlQuery = jooq
+                .select(
+                        field("id", Long.class),
+                        field("productCode", String.class),
+                        field("name", String.class)
+                )
+                .from(table("product"))
+                .where(field("productCode").eq(productCode));
+
+        Product productOrNull = sqlQuery.fetchOneInto(Product.class);
+
+        return Optional.ofNullable(productOrNull);
     }
 }

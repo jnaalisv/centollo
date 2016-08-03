@@ -3,6 +3,7 @@ package centollo.web.interfaces;
 import centollo.model.application.ProductService;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -28,5 +29,10 @@ public class ProductsController {
                 .stream()
                 .map(ProductDTO::new)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping(path = "/{productCode}", produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ProductDTO get(@PathVariable String productCode) {
+        return new ProductDTO(productService.findBy(productCode));
     }
 }

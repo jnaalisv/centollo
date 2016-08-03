@@ -24,8 +24,11 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
                 .responseBodyAsListOf(ProductDTO.class);
 
         assertThat(products.size()).isEqualTo(1);
-        assertThat(products.get(0).name).isEqualTo("Java");
 
+        ProductDTO java = products.get(0);
+
+        assertThat(java.name).isEqualTo("Java");
+        assertThat(java.productCode).isEqualTo("J1");
     }
 
     @Test
@@ -46,5 +49,22 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
                 .responseBodyAsListOf(ProductDTO.class);
 
         assertThat(products.size()).isEqualTo(7);
+
+        products.forEach(
+                p -> {
+                    assertThat(p.name).isNotEmpty();
+                    assertThat(p.productCode).isNotEmpty();
+                }
+        );
+    }
+
+    @Test
+    public void shouldFindByProductCode() {
+        ProductDTO kona = httpGet("/products/K2")
+                .acceptApplicationJson()
+                .expect200()
+                .responseBodyAs(ProductDTO.class);
+
+        assertThat(kona.productCode).isEqualTo("K2");
     }
 }

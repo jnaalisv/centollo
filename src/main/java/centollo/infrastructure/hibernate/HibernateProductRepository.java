@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import javax.inject.Inject;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class HibernateProductRepository implements ProductRepository {
@@ -30,5 +31,13 @@ public class HibernateProductRepository implements ProductRepository {
                 .createQuery("SELECT p FROM Product p where p.name like :query", Product.class)
                 .setParameter("query", "%"+query + "%")
                 .list();
+    }
+
+    @Override
+    public Optional<Product> findBy(String productCode) {
+        return getCurrentSession()
+                .createQuery("SELECT p FROM Product p where p.productCode = :productCode", Product.class)
+                .setParameter("productCode", productCode)
+                .uniqueResultOptional();
     }
 }

@@ -24,4 +24,12 @@ public class ProductServiceImpl implements ProductService {
     public List<Product> searchProducts(String query) {
         return productRepository.searchProducts(query);
     }
+
+    @Override
+    @Transactional
+    public Product findBy(String productCode) {
+        return productRepository
+                .findBy(productCode)
+                .orElseThrow(() -> new RuntimeException("not found"));
+    }
 }
