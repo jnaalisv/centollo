@@ -67,4 +67,11 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
 
         assertThat(kona.productCode).isEqualTo("K2");
     }
+
+    @Test
+    public void shouldReturn404OnProductNotFound() {
+        httpGet("/products/nope!")
+                .acceptApplicationJson()
+                .expect404();
+    }
 }

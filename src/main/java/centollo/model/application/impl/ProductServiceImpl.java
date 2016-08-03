@@ -1,5 +1,6 @@
 package centollo.model.application.impl;
 
+import centollo.model.application.NotFoundException;
 import centollo.model.application.ProductService;
 import centollo.model.domain.Product;
 import centollo.model.domain.ProductRepository;
@@ -30,6 +31,6 @@ public class ProductServiceImpl implements ProductService {
     public Product findBy(String productCode) {
         return productRepository
                 .findBy(productCode)
-                .orElseThrow(() -> new RuntimeException("not found"));
+                .orElseThrow(() -> new NotFoundException(Product.class, productCode));
     }
 }
