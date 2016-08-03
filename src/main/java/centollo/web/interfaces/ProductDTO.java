@@ -10,17 +10,21 @@ public class ProductDTO {
     public String name;
     public String productCode;
     public ProductType productType;
+    public long id;
 
     @JsonCreator
-    public ProductDTO(@JsonProperty("name") String name,
+    public ProductDTO(@JsonProperty("id") long id,
+                      @JsonProperty("name") String name,
                       @JsonProperty("productCode") String productCode,
                       @JsonProperty("productType") ProductType productType) {
+        this.id = id;
         this.name = name;
         this.productCode = productCode;
         this.productType = productType;
     }
 
     public ProductDTO(Product product) {
+        this.id = product.getId();
         this.name = product.getName();
         this.productCode = product.getProductCode();
         this.productType = product.getProductType();

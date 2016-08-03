@@ -10,4 +10,6 @@ public interface ProductRepository {
     Optional<Product> findBy(String productCode);
 
     void add(Product product);
+
+    void update(Product product);
 }

@@ -81,7 +81,7 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
     @Test
     public void shouldAddANewProduct() {
 
-        ProductDTO aNewProduct = new ProductDTO("E10", "Compak E10", ProductType.GRINDERS);
+        ProductDTO aNewProduct = new ProductDTO(0l, "E10", "Compak E10", ProductType.GRINDERS);
 
         ProductDTO postedProduct = httpPost("/products")
                 .contentTypeApplicationJson()
@@ -93,5 +93,31 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
         assertThat(aNewProduct.name).isEqualTo(postedProduct.name);
         assertThat(aNewProduct.productCode).isEqualTo(postedProduct.productCode);
         assertThat(aNewProduct.productType).isEqualTo(postedProduct.productType);
+    }
+
+    @Test
+    public void shouldUpdateAProduct() {
+        ProductDTO compakE8 = httpGet("/products/CE8")
+                .acceptApplicationJson()
+                .expect200()
+                .responseBodyAs(ProductDTO.class);
+
+        compakE8.name = "Fancy New E8!";
+
+        ProductDTO updatedCompakE8 = httpPut("/products/CE8")
+                .contentTypeApplicationJson()
+                .content(compakE8)
+                .acceptApplicationJson()
+                .expect200()
+                .responseBodyAs(ProductDTO.class);
+
+        assertThat(updatedCompakE8.name).isEqualTo("Fancy New E8!");
+
+        updatedCompakE8 = httpGet("/products/CE8")
+                .acceptApplicationJson()
+                .expect200()
+                .responseBodyAs(ProductDTO.class);
+        
+        assertThat(updatedCompakE8.name).isEqualTo("Fancy New E8!");
     }
 }

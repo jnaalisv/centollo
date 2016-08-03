@@ -39,4 +39,10 @@ public class ProductServiceImpl implements ProductService {
     public void save(Product product) {
         productRepository.add(product);
     }
+
+    @Override
+    @Transactional
+    public void update(Product product) {
+        productRepository.update(product);
+    }
 }

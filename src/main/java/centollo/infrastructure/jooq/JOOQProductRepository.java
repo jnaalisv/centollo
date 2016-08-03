@@ -73,4 +73,15 @@ public class JOOQProductRepository implements ProductRepository {
             .values(product.getId(), product.getProductCode(), product.getName(), product.getProductType().toString())
             .execute();
     }
+
+    @Override
+    public void update(Product product) {
+        jooq
+                .update(table("product"))
+                .set(field("productCode", String.class), product.getProductCode())
+                .set(field("name", String.class), product.getName())
+                .set(field("productType", String.class), product.getProductType().toString())
+                .where(field("id", Long.class).eq(product.getId()))
+                .execute();
+    }
 }

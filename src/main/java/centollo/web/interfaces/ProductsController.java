@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,5 +52,14 @@ public class ProductsController {
         HttpHeaders responseHeaders = new HttpHeaders();
         responseHeaders.set("Location", "products/" + product.getProductCode());
         return new ResponseEntity<>(new ProductDTO(product), responseHeaders, HttpStatus.CREATED);
+    }
+
+    @PutMapping(path = "/{productCode}", consumes = MediaType.APPLICATION_JSON_UTF8_VALUE, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+    public ProductDTO put(@RequestBody ProductDTO aProduct) {
+
+        Product product = new Product(aProduct.id, aProduct.productCode, aProduct.name, aProduct.productType);
+        productService.update(product);
+
+        return new ProductDTO(product);
     }
 }

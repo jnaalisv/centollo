@@ -32,4 +32,9 @@ public class SansOrmProductRepository implements ProductRepository {
     public void add(Product product) {
         sqlExecutor.insertObject(product);
     }
+
+    @Override
+    public void update(Product product) {
+        sqlExecutor.updateObject(product);
+    }
 }

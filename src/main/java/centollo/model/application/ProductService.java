@@ -11,4 +11,6 @@ public interface ProductService {
     Product findBy(String productCode);
 
     void save(Product product);
+
+    void update(Product product);
 }
