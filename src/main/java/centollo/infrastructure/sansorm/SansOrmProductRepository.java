@@ -27,4 +27,9 @@ public class SansOrmProductRepository implements ProductRepository {
     public Optional<Product> findBy(String productCode) {
         return sqlExecutor.objectFromClause(Product.class, "productCode = ?", productCode);
     }
+
+    @Override
+    public void add(Product product) {
+        sqlExecutor.insertObject(product);
+    }
 }

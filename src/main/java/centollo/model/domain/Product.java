@@ -12,7 +12,7 @@ import javax.persistence.Table;
 public class Product {
 
     @Id
-    public long id;
+    private long id;
 
     @Column(name = "productCode")
     private String productCode;
@@ -42,5 +42,9 @@ public class Product {
 
     public ProductType getProductType() {
         return productType;
+    }
+
+    public long getId() {
+        return id;
     }
 }

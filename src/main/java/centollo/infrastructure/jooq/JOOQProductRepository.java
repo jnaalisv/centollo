@@ -60,4 +60,17 @@ public class JOOQProductRepository implements ProductRepository {
 
         return Optional.ofNullable(productOrNull);
     }
+
+    @Override
+    public void add(Product product) {
+
+        jooq
+            .insertInto(table("product"),
+                    field("id", Long.class),
+                    field("productCode", String.class),
+                    field("name", String.class),
+                    field("productType", String.class))
+            .values(product.getId(), product.getProductCode(), product.getName(), product.getProductType().toString())
+            .execute();
+    }
 }

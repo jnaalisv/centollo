@@ -40,4 +40,9 @@ public class HibernateProductRepository implements ProductRepository {
                 .setParameter("productCode", productCode)
                 .uniqueResultOptional();
     }
+
+    @Override
+    public void add(Product product) {
+        getCurrentSession().save(product);
+    }
 }

@@ -8,4 +8,6 @@ public interface ProductRepository {
     List<Product> searchProducts(String query);
 
     Optional<Product> findBy(String productCode);
+
+    void add(Product product);
 }

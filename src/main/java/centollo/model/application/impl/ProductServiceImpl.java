@@ -33,4 +33,10 @@ public class ProductServiceImpl implements ProductService {
                 .findBy(productCode)
                 .orElseThrow(() -> new NotFoundException(Product.class, productCode));
     }
+
+    @Override
+    @Transactional
+    public void save(Product product) {
+        productRepository.add(product);
+    }
 }

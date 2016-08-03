@@ -77,4 +77,21 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
                 .acceptApplicationJson()
                 .expect404();
     }
+
+    @Test
+    public void shouldAddANewProduct() {
+
+        ProductDTO aNewProduct = new ProductDTO("E10", "Compak E10", ProductType.GRINDERS);
+
+        ProductDTO postedProduct = httpPost("/products")
+                .contentTypeApplicationJson()
+                .content(aNewProduct)
+                .acceptApplicationJson()
+                .expect201()
+                .responseBodyAs(ProductDTO.class);
+
+        assertThat(aNewProduct.name).isEqualTo(postedProduct.name);
+        assertThat(aNewProduct.productCode).isEqualTo(postedProduct.productCode);
+        assertThat(aNewProduct.productType).isEqualTo(postedProduct.productType);
+    }
 }
