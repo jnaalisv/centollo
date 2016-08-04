@@ -12,12 +12,15 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * Expects version information to live in a column/field named "version" of type bigint/long
+ * - Added support for
+ *  @Version-annotation, java.time.LocalDatetime, note: OrmReader doesnt support converting java.sql.Timestamp to java.time.LocalDateTime
+ *
  */
 public class VersionAwareOrmWriter {
 
@@ -25,24 +28,33 @@ public class VersionAwareOrmWriter {
     public static final String VERSION_FIELD_NAME = "version";
 
     private static Map<Introspected, String> updateStatementCache;
+    private static Map<Introspected, String> createStatementCache;
 
     protected static final Object mapSqlType(Object object, int sqlType) {
         switch (sqlType) {
+
             case Types.TIMESTAMP:
                 if (object instanceof java.util.Date) {
                     return new Timestamp(((java.util.Date) object).getTime());
                 }
+                if (object instanceof java.time.LocalDateTime) {
+                    LocalDateTime localDateTime = (LocalDateTime) object;
+                    return Timestamp.valueOf(localDateTime);
+                }
                 break;
+
             case Types.DECIMAL:
                 if (object instanceof BigInteger) {
                     return new BigDecimal(((BigInteger) object));
                 }
                 break;
+
             case Types.SMALLINT:
                 if (object instanceof Boolean) {
                     return (((Boolean) object) ? (short) 1 : (short) 0);
                 }
                 break;
+
             default:
                 break;
         }
@@ -51,6 +63,16 @@ public class VersionAwareOrmWriter {
     }
 
     static {
+        createStatementCache = Collections.synchronizedMap(new LinkedHashMap<Introspected, String>(CACHE_SIZE) {
+            private static final long serialVersionUID = 4559270460685275064L;
+
+            @Override
+            protected boolean removeEldestEntry(java.util.Map.Entry<Introspected, String> eldest)
+            {
+                return this.size() > CACHE_SIZE;
+            }
+        });
+
         updateStatementCache = Collections.synchronizedMap(new LinkedHashMap<Introspected, String>(CACHE_SIZE) {
             private static final long serialVersionUID = -5324251353646078607L;
 
@@ -59,6 +81,45 @@ public class VersionAwareOrmWriter {
                 return this.size() > CACHE_SIZE;
             }
         });
+    }
+
+    public static <T> T insertObject(Connection connection, T target) throws SQLException
+    {
+        Class<?> clazz = target.getClass();
+        Introspected introspected = Introspector.getIntrospected(clazz);
+        String[] columnNames = introspected.getInsertableColumns();
+
+        PreparedStatement stmt = createStatementForInsert(connection, introspected, columnNames);
+        setParamsExecuteClose(target, introspected, columnNames, stmt);
+
+        return target;
+    }
+
+    private static <T> PreparedStatement createStatementForInsert(Connection connection, Introspected introspected, String[] columns) throws SQLException {
+        String sql = createStatementCache.get(introspected);
+        if (sql == null) {
+            sql = createSqlForInsert(introspected.getTableName(), columns);
+            createStatementCache.put(introspected, sql);
+        }
+
+        if (introspected.hasGeneratedId()) {
+            return connection.prepareStatement(sql, introspected.getIdColumnNames());
+        } else {
+            return connection.prepareStatement(sql);
+        }
+    }
+
+    public static String createSqlForInsert(String tableName, String[] columns) {
+        StringBuilder sqlSB = new StringBuilder("INSERT INTO ").append(tableName).append('(');
+        StringBuilder sqlValues = new StringBuilder(") VALUES (");
+        for (String column : columns) {
+            sqlSB.append(column).append(',');
+            sqlValues.append("?,");
+        }
+        sqlValues.deleteCharAt(sqlValues.length() - 1);
+        sqlSB.deleteCharAt(sqlSB.length() - 1).append(sqlValues).append(')');
+
+        return sqlSB.toString();
     }
 
     public static <T> int updateVersionedObject(Connection connection, T target) throws SQLException {
@@ -138,6 +199,7 @@ public class VersionAwareOrmWriter {
             }
         }
 
+        // TODO: broken on insert
         stmt.setObject(parameterIndex, previousVersion, versionSqlType);
 
         int rowCount = stmt.executeUpdate();

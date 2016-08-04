@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import centollo.model.domain.Product;
 import centollo.model.domain.ProductType;
 
+import java.time.LocalDateTime;
+
 public class ProductDTO {
 
     public String name;
@@ -13,6 +15,7 @@ public class ProductDTO {
     public ProductType productType;
     public long id;
     public long version = 0L;
+    public LocalDateTime lastModified;
 
     @JsonCreator
     public ProductDTO(@JsonProperty("id") long id,
@@ -31,5 +34,6 @@ public class ProductDTO {
         this.productCode = product.getProductCode();
         this.productType = product.getProductType();
         this.version = product.getVersion();
+        this.lastModified = product.getLastModified();
     }
 }

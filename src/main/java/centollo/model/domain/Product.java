@@ -7,6 +7,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
+import java.time.LocalDateTime;
 
 @Entity // required by Hibernate
 @Table(name = "product") // required by SansOrm
@@ -18,6 +19,9 @@ public class Product {
     @Version
     @Column(name = "version")
     private long version = 0l;
+
+    @Column(name = "lastModified")
+    private LocalDateTime lastModified;
 
     @Column(name = "productCode") // required by SansOrm
     private String productCode;
@@ -60,5 +64,13 @@ public class Product {
 
     public void setVersion(long version) {
         this.version = version;
+    }
+
+    public LocalDateTime getLastModified() {
+        return lastModified;
+    }
+
+    public void setLastModified(LocalDateTime lastModified) {
+        this.lastModified = lastModified;
     }
 }

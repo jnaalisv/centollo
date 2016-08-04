@@ -34,7 +34,7 @@ public class SqlExecutor {
     }
 
     public <T> T insertObject(T object) {
-        return execute(connection -> OrmElf.insertObject(connection, object));
+        return execute(connection -> VersionAwareOrmWriter.insertObject(connection, object));
     }
 
     public <T> T updateObject(T object) {

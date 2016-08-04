@@ -23,7 +23,8 @@ public abstract class AbstractWebApiTest {
     @Inject
     private WebApplicationContext webApplicationContext;
 
-    protected final ObjectMapper objectMapper = new ObjectMapper();
+    @Inject
+    protected ObjectMapper objectMapper;
 
     protected MockMvc mockMvc;
 

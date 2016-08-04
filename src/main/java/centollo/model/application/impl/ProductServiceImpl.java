@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -37,12 +38,14 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     public void save(Product product) {
+        product.setLastModified(LocalDateTime.now());
         productRepository.add(product);
     }
 
     @Override
     @Transactional
     public void update(Product product) {
+        product.setLastModified(LocalDateTime.now());
         productRepository.update(product);
     }
 }
