@@ -1,14 +1,12 @@
 package centollo.web.interfaces;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.hibernate.StaleStateException;
+import centollo.model.application.NotFoundException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,7 +14,7 @@ import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import centollo.model.application.NotFoundException;
+import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public final class RestErrorHandler extends ResponseEntityExceptionHandler {
@@ -53,8 +51,8 @@ public final class RestErrorHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(HibernateOptimisticLockingFailureException.class)
-    public ResponseEntity<String> handleHibernateOptimisticLockingFailureException(HibernateOptimisticLockingFailureException ex, HttpServletRequest httpRequest) {
+    @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
+    public ResponseEntity<String> handleObjectOptimisticLockingFailureException(ObjectOptimisticLockingFailureException ex, HttpServletRequest httpRequest) {
         logBadRequest(httpRequest, ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }

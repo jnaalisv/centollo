@@ -2,6 +2,7 @@ package centollo.infrastructure.sansorm;
 
 import com.zaxxer.sansorm.OrmElf;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -38,6 +39,14 @@ public class SqlExecutor {
 
     public <T> T updateObject(T object) {
         return execute(connection -> OrmElf.updateObject(connection, object));
+    }
+
+    public <T> T updateVersionedObject(T object) {
+        int rowCount =  execute(connection -> VersionAwareOrmWriter.updateVersionedObject(connection, object));
+        if (rowCount == 0) {
+            throw new ObjectOptimisticLockingFailureException(object.getClass(), "id not available");
+        }
+        return object;
     }
 
     public <T> int deleteObject(T object) {

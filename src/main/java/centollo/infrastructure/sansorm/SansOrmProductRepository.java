@@ -35,6 +35,6 @@ public class SansOrmProductRepository implements ProductRepository {
 
     @Override
     public void update(Product product) {
-        sqlExecutor.updateObject(product);
+        sqlExecutor.updateVersionedObject(product);
     }
 }
