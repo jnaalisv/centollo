@@ -56,4 +56,8 @@ public class Product {
     public Long getVersion() {
         return version;
     }
+
+    public void setVersion(long version) {
+        this.version = version;
+    }
 }

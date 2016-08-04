@@ -4,9 +4,11 @@ import centollo.model.domain.Product;
 import centollo.model.domain.ProductRepository;
 import centollo.model.domain.ProductType;
 import org.jooq.DSLContext;
+import org.jooq.Field;
 import org.jooq.Record4;
 import org.jooq.RecordMapper;
 import org.jooq.ResultQuery;
+import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
@@ -74,14 +76,27 @@ public class JOOQProductRepository implements ProductRepository {
             .execute();
     }
 
+    private static final Field<Long> VERSION = field("version", Long.class);
+
     @Override
     public void update(Product product) {
-        jooq
+
+        long currentVersion = product.getVersion();
+        long nextVersion = currentVersion + 1;
+
+        int rowCount = jooq
                 .update(table("product"))
                 .set(field("productCode", String.class), product.getProductCode())
                 .set(field("name", String.class), product.getName())
                 .set(field("productType", String.class), product.getProductType().toString())
-                .where(field("id", Long.class).eq(product.getId()))
+                .set(VERSION, nextVersion)
+                .where(field("id", Long.class).eq(product.getId()).and(VERSION.eq(currentVersion)))
                 .execute();
+
+        if (rowCount == 0) {
+            throw new ObjectOptimisticLockingFailureException(Product.class, product.getId());
+        }
+        
+        product.setVersion(nextVersion);
     }
 }
