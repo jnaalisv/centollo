@@ -105,25 +105,26 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
 
         assertThat(compakE8.productType).isEqualTo(ProductType.GRINDERS);
 
-        compakE8.name = "Fancy New E8!";
+        compakE8.name = "Caturra";
+        compakE8.productType = ProductType.BEANS;
 
-        ProductDTO updatedCompakE8 = httpPut("/products/CE8")
+        ProductDTO updatedProduct = httpPut("/products/CE8")
                 .contentTypeApplicationJson()
                 .content(compakE8)
                 .acceptApplicationJson()
                 .expect200()
                 .responseBodyAs(ProductDTO.class);
 
-        assertThat(updatedCompakE8.name).isEqualTo("Fancy New E8!");
-        assertThat(updatedCompakE8.productType).isEqualTo(ProductType.GRINDERS);
+        assertThat(updatedProduct.name).isEqualTo("Caturra");
+        assertThat(updatedProduct.productType).isEqualTo(ProductType.BEANS);
 
-        updatedCompakE8 = httpGet("/products/CE8")
+        updatedProduct = httpGet("/products/CE8")
                 .acceptApplicationJson()
                 .expect200()
                 .responseBodyAs(ProductDTO.class);
         
-        assertThat(updatedCompakE8.name).isEqualTo("Fancy New E8!");
-        assertThat(updatedCompakE8.productType).isEqualTo(ProductType.GRINDERS);
+        assertThat(updatedProduct.name).isEqualTo("Caturra");
+        assertThat(updatedProduct.productType).isEqualTo(ProductType.BEANS);
     }
 
     @Test

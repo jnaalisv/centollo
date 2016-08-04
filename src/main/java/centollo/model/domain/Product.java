@@ -25,6 +25,7 @@ public class Product {
     @Column(name = "name") // required by SansOrm
     private String name;
 
+    @Column(name = "productType") // required by SansOrm
     @Enumerated(EnumType.STRING) // required by Hibernate, SansOrm
     private ProductType productType;
 
