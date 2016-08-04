@@ -12,7 +12,7 @@ ext {
     hibernateVersion = "5.2.1.Final"
     jooqVersion = "3.8.4"
     hikariCPVersion = "2.4.7"
-    jacksonVersion = "2.7.3"
+    jacksonVersion = "2.8.1"
     servletApiVersion = "3.1.0"
     slf4jVersion = "1.7.21"
     logbackVersion = "1.1.7"
