@@ -10,9 +10,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.jdbc.datasource.init.DataSourceInitializer;
-import org.springframework.jdbc.datasource.init.ResourceDatabasePopulator;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 
@@ -26,7 +23,7 @@ public class HibernateConfig {
         hibernateProperties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         //hibernateProperties.put("hibernate.hbm2ddl.auto","create"); // create ddl when session factory is created
         hibernateProperties.put("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
-        hibernateProperties.put("hibernate.show_sql","true");
+        hibernateProperties.put("hibernate.show_sql","false");
         hibernateProperties.put("hibernate.format_sql", "true");
         return hibernateProperties;
     }
