@@ -1,18 +1,17 @@
 package centollo.web.products;
 
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-
-import java.util.List;
-
-import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-
 import centollo.model.config.ModelConfiguration;
 import centollo.model.domain.ProductType;
 import centollo.web.AbstractWebApiTest;
 import centollo.web.config.WebConfiguration;
 import centollo.web.interfaces.ProductDTO;
+import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+
+import java.util.List;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Sql({"classpath:products.sql"})
 @ContextConfiguration(classes = {ModelConfiguration.class, WebConfiguration.class })
@@ -31,6 +30,7 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
 
         assertThat(java.name).isEqualTo("Java");
         assertThat(java.productCode).isEqualTo("J1");
+        assertThat(java.productType).isEqualTo(ProductType.BEANS);
     }
 
     @Test
@@ -103,6 +103,8 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
                 .expect200()
                 .responseBodyAs(ProductDTO.class);
 
+        assertThat(compakE8.productType).isEqualTo(ProductType.GRINDERS);
+
         compakE8.name = "Fancy New E8!";
 
         ProductDTO updatedCompakE8 = httpPut("/products/CE8")
@@ -113,6 +115,7 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
                 .responseBodyAs(ProductDTO.class);
 
         assertThat(updatedCompakE8.name).isEqualTo("Fancy New E8!");
+        assertThat(updatedCompakE8.productType).isEqualTo(ProductType.GRINDERS);
 
         updatedCompakE8 = httpGet("/products/CE8")
                 .acceptApplicationJson()
@@ -120,6 +123,7 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
                 .responseBodyAs(ProductDTO.class);
         
         assertThat(updatedCompakE8.name).isEqualTo("Fancy New E8!");
+        assertThat(updatedCompakE8.productType).isEqualTo(ProductType.GRINDERS);
     }
 
     @Test
