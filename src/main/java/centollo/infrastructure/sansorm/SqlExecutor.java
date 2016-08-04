@@ -1,6 +1,7 @@
 package centollo.infrastructure.sansorm;
 
-import com.zaxxer.sansorm.OrmElf;
+import centollo.infrastructure.sansorm.framework.Java8OrmReader;
+import centollo.infrastructure.sansorm.framework.Java8OrmWriter;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
@@ -10,8 +11,6 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
-
-import static com.zaxxer.sansorm.SqlClosureElf.quietClose;
 
 @Service
 public class SqlExecutor {
@@ -24,25 +23,25 @@ public class SqlExecutor {
     }
 
     public <T> Optional<T> getObjectById(Class<T> type, Object... ids) {
-        T result = execute(connection -> OrmElf.objectById(connection, type, ids));
+        T result = execute(connection -> Java8OrmReader.objectById(connection, type, ids));
         return Optional.ofNullable(result);
     }
 
     public <T> Optional<T> objectFromClause(Class<T> type, String clause, Object... args) {
-        T result = execute(connection -> OrmElf.objectFromClause(connection, type, clause, args));
+        T result = execute(connection -> Java8OrmReader.objectFromClause(connection, type, clause, args));
         return Optional.ofNullable(result);
     }
 
     public <T> T insertObject(T object) {
-        return execute(connection -> VersionAwareOrmWriter.insertObject(connection, object));
+        return execute(connection -> Java8OrmWriter.insertObject(connection, object));
     }
 
     public <T> T updateObject(T object) {
-        return execute(connection -> OrmElf.updateObject(connection, object));
+        return execute(connection -> Java8OrmWriter.updateObject(connection, object));
     }
 
     public <T> T updateVersionedObject(T object) {
-        int rowCount =  execute(connection -> VersionAwareOrmWriter.updateVersionedObject(connection, object));
+        int rowCount =  execute(connection -> Java8OrmWriter.updateVersionedObject(connection, object));
         if (rowCount == 0) {
             throw new ObjectOptimisticLockingFailureException(object.getClass(), "id not available");
         }
@@ -50,23 +49,23 @@ public class SqlExecutor {
     }
 
     public <T> int deleteObject(T object) {
-        return execute(connection -> OrmElf.deleteObject(connection, object));
+        return execute(connection -> Java8OrmWriter.deleteObject(connection, object));
     }
 
     public <T> int deleteObjectById(Class<T> clazz, Object... args) {
-        return execute(connection -> OrmElf.deleteObjectById(connection, clazz, args));
+        return execute(connection -> Java8OrmWriter.deleteObjectById(connection, clazz, args));
     }
 
     public <T> List<T> listFromClause(Class<T> clazz, String clause, Object... args) {
-        return execute(connection -> OrmElf.listFromClause(connection, clazz, clause, args));
+        return execute(connection -> Java8OrmReader.listFromClause(connection, clazz, clause, args));
     }
 
     public <T> int countObjectsFromClause(Class<T> clazz, String clause, Object... args) {
-        return execute(connection -> OrmElf.countObjectsFromClause(connection, clazz, clause, args));
+        return execute(connection -> Java8OrmReader.countObjectsFromClause(connection, clazz, clause, args));
     }
 
     public int executeUpdate(final String sql, final Object... args) {
-        return execute(connection -> OrmElf.executeUpdate(connection, sql, args));
+        return execute(connection -> Java8OrmWriter.executeUpdate(connection, sql, args));
     }
 
     private <T> T execute(SqlClosure<T> sqlClosure) {
@@ -85,4 +84,16 @@ public class SqlExecutor {
             quietClose(connection);
         }
     }
+
+    public static void quietClose(Connection connection) {
+        if (connection == null) {
+            return;
+        }
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            return;
+        }
+    }
+
 }
