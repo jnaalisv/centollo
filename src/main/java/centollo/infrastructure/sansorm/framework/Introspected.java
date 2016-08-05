@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
@@ -82,7 +83,13 @@ public class Introspected {
 
                 OneToMany oneToManyAnnotation = field.getAnnotation(OneToMany.class);
                 if (oneToManyAnnotation != null) {
-                    LOGGER.info("  -- field " + field.getName() + " skipped because oneToManyAnnotation");
+                    LOGGER.info("  -- field " + field.getName() + " skipped because OneToMany");
+                    continue;
+                }
+
+                ManyToOne manyToOneAnnotation = field.getAnnotation(ManyToOne.class);
+                if (manyToOneAnnotation != null) {
+                    LOGGER.info("  -- field " + field.getName() + " skipped because ManyToOne");
                     continue;
                 }
 

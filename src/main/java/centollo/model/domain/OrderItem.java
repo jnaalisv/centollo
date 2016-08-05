@@ -18,8 +18,9 @@ public class OrderItem {
     @Column(name = "productCode")
     private String productCode;
 
-    @Column(name = "order_id")
-    private long orderId;
+
+//    @Column(name = "order_id")// conflicts with hibernate
+//    private long order_id;
 
     @ManyToOne
     private PurchaseOrder order;
@@ -63,6 +64,6 @@ public class OrderItem {
     }
 
     public void setOrderId(long orderId) {
-        this.orderId = orderId;
+        //this.order_id = orderId;
     }
 }

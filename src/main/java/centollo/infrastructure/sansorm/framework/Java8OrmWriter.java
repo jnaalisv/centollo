@@ -76,6 +76,7 @@ public class Java8OrmWriter extends Java8OrmBase {
         }
 
         int[] rowCounts = stmt.executeBatch();
+
         stmt.close();
 
         return rowCounts;
