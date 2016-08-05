@@ -1,7 +1,5 @@
 package centollo.infrastructure.sansorm.framework;
 
-import com.zaxxer.sansorm.internal.Introspected;
-import com.zaxxer.sansorm.internal.Introspector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

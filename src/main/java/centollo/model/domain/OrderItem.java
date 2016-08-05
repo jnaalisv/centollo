@@ -18,6 +18,9 @@ public class OrderItem {
     @Column(name = "productCode")
     private String productCode;
 
+    @Column(name = "order_id")
+    private long orderId;
+
     @ManyToOne
     private PurchaseOrder order;
 
@@ -57,5 +60,9 @@ public class OrderItem {
 
     public long getId() {
         return id;
+    }
+
+    public void setOrderId(long orderId) {
+        this.orderId = orderId;
     }
 }

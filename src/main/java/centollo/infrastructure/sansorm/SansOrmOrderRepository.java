@@ -21,12 +21,13 @@ public class SansOrmOrderRepository implements OrderRepository {
     @Override
     public void add(PurchaseOrder order) {
         sqlExecutor.insertObject(order);
+        order.getOrderItems().forEach(orderItem -> orderItem.setOrderId(order.getId()));
         order.getOrderItems().forEach(sqlExecutor::insertObject);
     }
 
     @Override
     public Optional<PurchaseOrder> findBy(Long orderId) {
-        return null;
+        return sqlExecutor.objectFromClause(PurchaseOrder.class, "id = ?", orderId);
     }
 
 }
