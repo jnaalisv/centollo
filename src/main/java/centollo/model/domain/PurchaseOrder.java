@@ -2,6 +2,7 @@ package centollo.model.domain;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -14,6 +15,7 @@ import java.util.List;
 public class PurchaseOrder {
 
     @Id
+    @GeneratedValue
     private long id;
 
     @Version
