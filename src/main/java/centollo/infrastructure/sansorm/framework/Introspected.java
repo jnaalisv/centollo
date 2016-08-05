@@ -87,11 +87,11 @@ public class Introspected {
                     continue;
                 }
 
-                ManyToOne manyToOneAnnotation = field.getAnnotation(ManyToOne.class);
-                if (manyToOneAnnotation != null) {
-                    LOGGER.info("  -- field " + field.getName() + " skipped because ManyToOne");
-                    continue;
-                }
+//                ManyToOne manyToOneAnnotation = field.getAnnotation(ManyToOne.class);
+//                if (manyToOneAnnotation != null) {
+//                    LOGGER.info("  -- field " + field.getName() + " skipped because ManyToOne");
+//                    //continue;
+//                }
 
                 field.setAccessible(true);
 
@@ -369,8 +369,25 @@ public class Introspected {
         Field field = fcInfo.field;
 
         Column columnAnnotation = field.getAnnotation(Column.class);
+        ManyToOne manyToOneAnnotation = field.getAnnotation(ManyToOne.class);
 
-        if (columnAnnotation != null) {
+        if (manyToOneAnnotation != null) {
+            //LOGGER.info("  -- field " + field.getName() + " ManyToOne");
+
+
+            fcInfo.columnName = field.getName().toLowerCase() + "_id" ;
+            String columnTableName = manyToOneAnnotation.targetEntity().getSimpleName();
+
+            LOGGER.info("  -- field " + field.getName() + " has Column annotation: ["+columnTableName+ "."+ fcInfo.columnName+ "] (ManyToOne)");
+
+//            if (columnTableName != null && columnTableName.length() > 0) {
+//                fcInfo.columnTableName = columnTableName.toLowerCase();
+//            }
+
+            fcInfo.insertable = true;
+            fcInfo.updatable = true;
+
+        } else if (columnAnnotation != null) {
 
             fcInfo.columnName = columnAnnotation.name().toLowerCase();
             String columnTableName = columnAnnotation.table();

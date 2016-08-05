@@ -1,5 +1,6 @@
 package centollo.infrastructure.sansorm.framework;
 
+import centollo.model.domain.PurchaseOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -127,7 +128,16 @@ class Java8OrmBase {
                 }
                 break;
 
+            case Types.INTEGER:
+                if (object instanceof PurchaseOrder) {
+                    PurchaseOrder order = (PurchaseOrder) object;
+                    return order.getId();
+                }
+                break;
+
             default:
+                LOGGER.info("default " + object.getClass().getSimpleName());
+
                 break;
         }
 
