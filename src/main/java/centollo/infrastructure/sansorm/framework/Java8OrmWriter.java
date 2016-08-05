@@ -41,10 +41,10 @@ public class Java8OrmWriter extends Java8OrmBase {
         });
     }
 
-    public static <T> void insertListBatched(Connection connection, Iterable<T> iterable) throws SQLException {
+    public static <T> int[] insertListBatched(Connection connection, Iterable<T> iterable) throws SQLException {
         Iterator<T> iterableIterator = iterable.iterator();
         if (!iterableIterator.hasNext()) {
-            return;
+            return new int[]{};
         }
 
         Class<?> clazz = iterableIterator.next().getClass();
@@ -75,8 +75,10 @@ public class Java8OrmWriter extends Java8OrmBase {
             stmt.clearParameters();
         }
 
-        stmt.executeBatch();
+        int[] rowCounts = stmt.executeBatch();
         stmt.close();
+
+        return rowCounts;
     }
 
     public static <T> void insertListNotBatched(Connection connection, Iterable<T> iterable) throws SQLException {
