@@ -25,14 +25,14 @@ class Java8OrmBase {
     private static Map<String, String> csvCache;
 
     static{
-        csvCache = new ConcurrentHashMap<String, String>();
+        csvCache = new ConcurrentHashMap<>();
     }
 
-    protected Java8OrmBase(){
+    Java8OrmBase(){
         // protected constructor
     }
 
-    protected static final void populateStatementParameters(PreparedStatement stmt, Object... args) throws SQLException{
+    static void populateStatementParameters(PreparedStatement stmt, Object... args) throws SQLException{
         ParameterMetaData parameterMetaData = stmt.getParameterMetaData();
         final int paramCount = parameterMetaData.getParameterCount();
         if (paramCount > 0 && args.length < paramCount){
@@ -46,7 +46,7 @@ class Java8OrmBase {
         }
     }
 
-    public static final <T> String getColumnsCsv(Class<T> clazz, String... tablePrefix) {
+    static <T> String getColumnsCsv(Class<T> clazz, String... tablePrefix) {
         String cacheKey = (tablePrefix == null || tablePrefix.length == 0 ? clazz.getName() : tablePrefix[0] + clazz.getName());
 
         String columnCsv = csvCache.get(cacheKey);
@@ -62,7 +62,7 @@ class Java8OrmBase {
                 if (columnTableName != null) {
                     sb.append(columnTableName).append('.');
                 }
-                else if (tablePrefix.length > 0) {
+                else if (tablePrefix != null && tablePrefix.length > 0) {
                     sb.append(tablePrefix[0]).append('.');
                 }
 
@@ -76,8 +76,8 @@ class Java8OrmBase {
         return columnCsv;
     }
 
-    public static final <T> String getColumnsCsvExclude(Class<T> clazz, String...excludeColumns) {
-        Set<String> excludes = new HashSet<String>(Arrays.asList(excludeColumns));
+    public static <T> String getColumnsCsvExclude(Class<T> clazz, String...excludeColumns) {
+        Set<String> excludes = new HashSet<>(Arrays.asList(excludeColumns));
 
         Introspected introspected = Introspector.getIntrospected(clazz);
         StringBuilder sb = new StringBuilder();
@@ -101,7 +101,7 @@ class Java8OrmBase {
         return sb.deleteCharAt(sb.length() - 1).toString();
     }
 
-    protected static final Object mapSqlType(Object object, int sqlType) {
+    static Object mapSqlType(Object object, int sqlType) {
 
         LOGGER.debug("mapSqlType " +object.getClass().getSimpleName() + " to sqlType:" + sqlType);
 

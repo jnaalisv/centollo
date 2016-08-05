@@ -115,11 +115,9 @@ public class Java8OrmWriter extends Java8OrmBase {
 
             // Set auto-generated ID
             ResultSet generatedKeys = stmt.getGeneratedKeys();
-            if (generatedKeys != null)
-            {
+            if (generatedKeys != null) {
                 final String idColumn = idColumnNames[0];
-                while (generatedKeys.next())
-                {
+                while (generatedKeys.next()) {
                     introspected.set(item, idColumn, generatedKeys.getObject(1));
                 }
                 generatedKeys.close();
@@ -133,7 +131,7 @@ public class Java8OrmWriter extends Java8OrmBase {
         if (hasSelfJoinColumn) {
             final String selfJoinColumn = introspected.getSelfJoinColumn();
             final String idColumn = idColumnNames[0];
-            StringBuffer sql = new StringBuffer("UPDATE ").append(introspected.getTableName()).append(" SET ");
+            StringBuilder sql = new StringBuilder("UPDATE ").append(introspected.getTableName()).append(" SET ");
             sql.append(selfJoinColumn).append("=? WHERE ").append(idColumn).append("=?");
             stmt = connection.prepareStatement(sql.toString());
             for (T item : iterable) {
@@ -173,8 +171,7 @@ public class Java8OrmWriter extends Java8OrmBase {
         StringBuilder sql = new StringBuilder();
         sql.append("DELETE FROM ").append(introspected.getTableName()).append(" WHERE ");
 
-        for (String idColumn : introspected.getIdColumnNames())
-        {
+        for (String idColumn : introspected.getIdColumnNames()) {
             sql.append(idColumn).append("=? AND ");
         }
         sql.setLength(sql.length() - 5);
@@ -182,46 +179,26 @@ public class Java8OrmWriter extends Java8OrmBase {
         return executeUpdate(connection, sql.toString(), args);
     }
 
-    public static int executeUpdate(Connection connection, String sql, Object... args) throws SQLException
-    {
-        PreparedStatement stmt = null;
-        try
-        {
-            stmt = connection.prepareStatement(sql);
-
+    public static int executeUpdate(Connection connection, String sql, Object... args) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             populateStatementParameters(stmt, args);
-
-            int rc = stmt.executeUpdate();
-
-            return rc;
-        }
-        finally
-        {
-            if (stmt != null)
-            {
-                stmt.close();
-            }
+            return stmt.executeUpdate();
         }
     }
 
-    private static <T> PreparedStatement createStatementForUpdate(Connection connection, Introspected introspected, String[] columnNames) throws SQLException
-    {
+    private static PreparedStatement createStatementForUpdate(Connection connection, Introspected introspected, String[] columnNames) throws SQLException {
         String sql = updateStatementCache.get(introspected);
-        if (sql == null)
-        {
+        if (sql == null) {
             StringBuilder sqlSB = new StringBuilder("UPDATE ").append(introspected.getTableName()).append(" SET ");
-            for (String column : columnNames)
-            {
+            for (String column : columnNames) {
                 sqlSB.append(column).append("=?,");
             }
             sqlSB.deleteCharAt(sqlSB.length() - 1);
 
             String[] idColumnNames = introspected.getIdColumnNames();
-            if (idColumnNames.length > 0)
-            {
+            if (idColumnNames.length > 0) {
                 sqlSB.append(" WHERE ");
-                for (String column : idColumnNames)
-                {
+                for (String column : idColumnNames) {
                     sqlSB.append(column).append("=? AND ");
                 }
                 sqlSB.setLength(sqlSB.length() - 5);
@@ -234,8 +211,7 @@ public class Java8OrmWriter extends Java8OrmBase {
         return connection.prepareStatement(sql);
     }
 
-    public static <T> T insertObject(Connection connection, T target) throws SQLException
-    {
+    public static <T> T insertObject(Connection connection, T target) throws SQLException {
         Class<?> clazz = target.getClass();
         Introspected introspected = Introspector.getIntrospected(clazz);
         String[] columnNames = introspected.getInsertableColumns();
@@ -246,7 +222,7 @@ public class Java8OrmWriter extends Java8OrmBase {
         return target;
     }
 
-    private static <T> PreparedStatement createStatementForInsert(Connection connection, Introspected introspected, String[] columns) throws SQLException {
+    private static PreparedStatement createStatementForInsert(Connection connection, Introspected introspected, String[] columns) throws SQLException {
         String sql = createStatementCache.get(introspected);
         if (sql == null) {
             sql = createSqlForInsert(introspected.getTableName(), columns);
@@ -260,7 +236,7 @@ public class Java8OrmWriter extends Java8OrmBase {
         }
     }
 
-    public static String createSqlForInsert(String tableName, String[] columns) {
+    private static String createSqlForInsert(String tableName, String[] columns) {
         StringBuilder sqlSB = new StringBuilder("INSERT INTO ").append(tableName).append('(');
         StringBuilder sqlValues = new StringBuilder(") VALUES (");
         for (String column : columns) {
@@ -289,7 +265,7 @@ public class Java8OrmWriter extends Java8OrmBase {
         return setParamsExecuteCloseVersioned(target, introspected, columnNames, stmt);
     }
 
-    public static String createSqlForUpdate(Introspected introspected, String[] columnNames) {
+    private static String createSqlForUpdate(Introspected introspected, String[] columnNames) {
         StringBuilder sqlSB = new StringBuilder("UPDATE ").append(introspected.getTableName()).append(" SET ");
         for (String column : columnNames) {
             sqlSB.append(column).append("=?,");
@@ -359,7 +335,7 @@ public class Java8OrmWriter extends Java8OrmBase {
         int parameterIndex = 1;
 
         long previousVersion = 0;
-        long newVersion = 0l;
+        long newVersion = 0L;
         int versionSqlType = Types.BIGINT;
 
         for (String column : columnNames) {

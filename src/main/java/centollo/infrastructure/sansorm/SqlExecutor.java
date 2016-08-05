@@ -23,13 +23,11 @@ public class SqlExecutor {
     }
 
     public <T> Optional<T> getObjectById(Class<T> type, Object... ids) {
-        T result = execute(connection -> Java8OrmReader.objectById(connection, type, ids));
-        return Optional.ofNullable(result);
+        return execute(connection -> Java8OrmReader.objectById(connection, type, ids));
     }
 
     public <T> Optional<T> objectFromClause(Class<T> type, String clause, Object... args) {
-        T result = execute(connection -> Java8OrmReader.objectFromClause(connection, type, clause, args));
-        return Optional.ofNullable(result);
+        return execute(connection -> Java8OrmReader.objectFromClause(connection, type, clause, args));
     }
 
     public <T> T insertObject(T object) {

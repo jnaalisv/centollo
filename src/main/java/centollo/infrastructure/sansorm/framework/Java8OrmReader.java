@@ -16,6 +16,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 public class Java8OrmReader extends Java8OrmBase {
@@ -35,7 +36,7 @@ public class Java8OrmReader extends Java8OrmBase {
         });
     }
 
-    public static <T> List<T> statementToList(PreparedStatement stmt, Class<T> clazz, Object... args) throws SQLException {
+    private static <T> List<T> statementToList(PreparedStatement stmt, Class<T> clazz, Object... args) throws SQLException {
         try {
             populateStatementParameters(stmt, args);
 
@@ -46,8 +47,8 @@ public class Java8OrmReader extends Java8OrmBase {
         }
     }
 
-    public static <T> List<T> resultSetToList(ResultSet resultSet, Class<T> targetClass) throws SQLException {
-        List<T> list = new ArrayList<T>();
+    private static <T> List<T> resultSetToList(ResultSet resultSet, Class<T> targetClass) throws SQLException {
+        List<T> list = new ArrayList<>();
         if (!resultSet.next()) {
             resultSet.close();
             return list;
@@ -55,8 +56,8 @@ public class Java8OrmReader extends Java8OrmBase {
 
         Introspected introspected = Introspector.getIntrospected(targetClass);
         final boolean hasJoinColumns = introspected.hasSelfJoinColumn();
-        Map<T, Object> deferredSelfJoinFkMap = (hasJoinColumns ? new HashMap<T, Object>() : null);
-        Map<Object, T> idToTargetMap = (hasJoinColumns ? new HashMap<Object, T>() : null);
+        Map<T, Object> deferredSelfJoinFkMap = (hasJoinColumns ? new HashMap<>() : null);
+        Map<Object, T> idToTargetMap = (hasJoinColumns ? new HashMap<>() : null);
 
         ResultSetMetaData metaData = resultSet.getMetaData();
         final int columnCount = metaData.getColumnCount();
@@ -112,36 +113,28 @@ public class Java8OrmReader extends Java8OrmBase {
     }
 
 
-    public static <T> T statementToObject(PreparedStatement stmt, Class<T> clazz, Object... args) throws SQLException {
+    private static <T> Optional<T> statementToObject(PreparedStatement stmt, Class<T> clazz, Object... args) throws SQLException {
         populateStatementParameters(stmt, args);
 
-        ResultSet resultSet = null;
-        try {
-            resultSet = stmt.executeQuery();
+        try (ResultSet resultSet = stmt.executeQuery()) {
             if (resultSet.next()) {
-                T target = (T) clazz.newInstance();
-                return resultSetToObject(resultSet, target);
+                T target = clazz.newInstance();
+                return Optional.ofNullable(resultSetToObject(resultSet, target));
             }
-
-            return null;
-        }
-        catch (Exception e) {
+            return Optional.empty();
+        } catch (Exception e) {
             throw new RuntimeException(e);
-        }
-        finally {
-            if (resultSet != null) {
-                resultSet.close();
-            }
+        } finally {
             stmt.close();
         }
     }
 
-    public static <T> T resultSetToObject(ResultSet resultSet, T target) throws SQLException {
+    private static <T> T resultSetToObject(ResultSet resultSet, T target) throws SQLException {
         Set<String> ignoreNone = Collections.emptySet();
         return resultSetToObject(resultSet, target, ignoreNone);
     }
 
-    public static <T> T resultSetToObject(ResultSet resultSet, T target, Set<String> ignoredColumns) throws SQLException {
+    private static <T> T resultSetToObject(ResultSet resultSet, T target, Set<String> ignoredColumns) throws SQLException {
         ResultSetMetaData metaData = resultSet.getMetaData();
 
         Introspected introspected = Introspector.getIntrospected(target.getClass());
@@ -170,7 +163,7 @@ public class Java8OrmReader extends Java8OrmBase {
         return object;
     }
 
-    public static <T> T objectById(Connection connection, Class<T> clazz, Object... args) throws SQLException {
+    public static <T> Optional<T> objectById(Connection connection, Class<T> clazz, Object... args) throws SQLException {
         Introspected introspected = Introspector.getIntrospected(clazz);
 
         StringBuilder where = new StringBuilder();
@@ -197,7 +190,7 @@ public class Java8OrmReader extends Java8OrmBase {
         return list;
     }
 
-    public static <T> T objectFromClause(Connection connection, Class<T> clazz, String clause, Object... args) throws SQLException {
+    public static <T> Optional<T> objectFromClause(Connection connection, Class<T> clazz, String clause, Object... args) throws SQLException {
         String sql = generateSelectFromClause(clazz, clause);
 
         PreparedStatement stmt = connection.prepareStatement(sql);
@@ -228,29 +221,21 @@ public class Java8OrmReader extends Java8OrmBase {
             sql.append(' ').append(clause);
         }
 
-        return numberFromSql(connection, sql.toString(), args).intValue();
+        Optional<Number> maybeNumber = numberFromSql(connection, sql.toString(), args);
+
+        return maybeNumber.orElse(0).intValue();
     }
 
-    public static Number numberFromSql(Connection connection, String sql, Object... args) throws SQLException {
-        PreparedStatement stmt = connection.prepareStatement(sql);
-        try {
+    private static Optional<Number> numberFromSql(Connection connection, String sql, Object... args) throws SQLException {
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             populateStatementParameters(stmt, args);
 
-            ResultSet resultSet = stmt.executeQuery();
-            try {
+            try (ResultSet resultSet = stmt.executeQuery()) {
                 if (resultSet.next()) {
-                    return (Number) resultSet.getObject(1);
+                    return Optional.ofNullable((Number) resultSet.getObject(1));
                 }
 
-                return null;
-            }
-            finally {
-                resultSet.close();
-            }
-        }
-        finally {
-            if (stmt != null) {
-                stmt.close();
+                return Optional.empty();
             }
         }
     }
