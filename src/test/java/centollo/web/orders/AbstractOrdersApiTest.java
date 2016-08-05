@@ -10,6 +10,8 @@ import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Sql({"classpath:products.sql"})
 @ContextConfiguration(classes = {ModelConfiguration.class, WebConfiguration.class })
 public abstract class AbstractOrdersApiTest extends AbstractWebApiTest {
@@ -21,9 +23,16 @@ public abstract class AbstractOrdersApiTest extends AbstractWebApiTest {
                 .expect200()
                 .responseBodyAs(ProductDTO.class);
 
-        OrderItemDTO newOrderItem = new OrderItemDTO(kona.productCode, 5);
+        ProductDTO java = httpGet("/products/J1")
+                .acceptApplicationJson()
+                .expect200()
+                .responseBodyAs(ProductDTO.class);
 
-        OrderDTO aNewOrder = new OrderDTO(newOrderItem);
+
+        OrderItemDTO konaOrderItem = new OrderItemDTO(kona.productCode, 5);
+        OrderItemDTO javaOrderItem = new OrderItemDTO(java.productCode, 1);
+
+        OrderDTO aNewOrder = new OrderDTO(konaOrderItem, javaOrderItem);
 
         OrderDTO postedOrder = httpPost("/orders")
                 .contentTypeApplicationJson()
@@ -32,5 +41,23 @@ public abstract class AbstractOrdersApiTest extends AbstractWebApiTest {
                 .expect201()
                 .responseBodyAs(OrderDTO.class);
 
+        assertThat(postedOrder.id).isGreaterThan(0L);
+        assertThat(postedOrder.orderItems.size()).isEqualTo(2);
+        postedOrder.orderItems.forEach(orderItemDTO -> {
+            assertThat(orderItemDTO.id).isGreaterThan(0);
+            assertThat(orderItemDTO.productCode).isIn(java.productCode, kona.productCode);
+        });
+
+        OrderDTO theOrder = httpGet("/orders/"+postedOrder.id)
+                .acceptApplicationJson()
+                .expect200()
+                .responseBodyAs(OrderDTO.class);
+
+        assertThat(theOrder.id).isGreaterThan(0L);
+        assertThat(theOrder.orderItems.size()).isEqualTo(2);
+        theOrder.orderItems.forEach(orderItemDTO -> {
+            assertThat(orderItemDTO.id).isGreaterThan(0);
+            assertThat(orderItemDTO.productCode).isIn(java.productCode, kona.productCode);
+        });
     }
 }

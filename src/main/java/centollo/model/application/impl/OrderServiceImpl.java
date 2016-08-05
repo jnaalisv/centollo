@@ -1,5 +1,6 @@
 package centollo.model.application.impl;
 
+import centollo.model.application.NotFoundException;
 import centollo.model.application.OrderService;
 import centollo.model.domain.OrderRepository;
 import centollo.model.domain.PurchaseOrder;
@@ -23,6 +24,16 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void save(PurchaseOrder order) {
         order.setLastModified(LocalDateTime.now());
+        order.getOrderItems().forEach(orderItem -> orderItem.setOrder(order));
+
         orderRepository.add(order);
+    }
+
+    @Override
+    @Transactional
+    public PurchaseOrder findBy(Long orderId) {
+        return orderRepository
+                .findBy(orderId)
+                .orElseThrow(() -> new NotFoundException(PurchaseOrder.class, orderId));
     }
 }

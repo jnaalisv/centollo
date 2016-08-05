@@ -4,6 +4,7 @@ import centollo.model.domain.OrderItem;
 
 public class OrderItemDTO {
 
+    public long id;
     public String productCode;
     public int itemCount;
 
@@ -12,6 +13,7 @@ public class OrderItemDTO {
     public OrderItemDTO(OrderItem orderItem) {
         this.productCode = orderItem.getProductCode();
         this.itemCount = orderItem.getItemCount();
+        this.id = orderItem.getId();
     }
 
     public OrderItemDTO(String productCode, int itemCount) {

@@ -5,6 +5,7 @@ import centollo.model.domain.PurchaseOrder;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 @Repository
 public class SansOrmOrderRepository implements OrderRepository {
@@ -21,6 +22,11 @@ public class SansOrmOrderRepository implements OrderRepository {
     public void add(PurchaseOrder order) {
         sqlExecutor.insertObject(order);
         order.getOrderItems().forEach(sqlExecutor::insertObject);
+    }
+
+    @Override
+    public Optional<PurchaseOrder> findBy(Long orderId) {
+        return null;
     }
 
 }
