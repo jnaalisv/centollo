@@ -9,6 +9,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.IOException;
@@ -73,15 +74,19 @@ public class Introspected {
 
             for (Field field : clazz.getDeclaredFields()) {
 
-
-
                 int modifiers = field.getModifiers();
                 if (Modifier.isStatic(modifiers) || Modifier.isFinal(modifiers) || Modifier.isTransient(modifiers)) {
                     LOGGER.info("  -- field " + field.getName() + " skipped");
                     continue;
                 }
 
-                  field.setAccessible(true);
+                OneToMany oneToManyAnnotation = field.getAnnotation(OneToMany.class);
+                if (oneToManyAnnotation != null) {
+                    LOGGER.info("  -- field " + field.getName() + " skipped because oneToManyAnnotation");
+                    continue;
+                }
+
+                field.setAccessible(true);
 
                 FieldColumnInfo fcInfo = new FieldColumnInfo(field);
 
@@ -236,7 +241,7 @@ public class Introspected {
             }
         }
 
-        insertableColumns = columns.toArray(new String[0]); 
+        insertableColumns = columns.toArray(new String[0]);
         return insertableColumns;
     }
 
@@ -358,17 +363,12 @@ public class Introspected {
 
         Column columnAnnotation = field.getAnnotation(Column.class);
 
-
-
         if (columnAnnotation != null) {
-
-
 
             fcInfo.columnName = columnAnnotation.name().toLowerCase();
             String columnTableName = columnAnnotation.table();
 
             LOGGER.info("  -- field " + field.getName() + " has Column annotation: ["+columnTableName+ "."+ fcInfo.columnName+ "]");
-
 
             if (columnTableName != null && columnTableName.length() > 0) {
                 fcInfo.columnTableName = columnTableName.toLowerCase();
