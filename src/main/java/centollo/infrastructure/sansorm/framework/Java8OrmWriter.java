@@ -156,7 +156,7 @@ public class Java8OrmWriter extends Java8OrmBase {
     }
 
     private static PreparedStatement createStatementForUpdate(Connection connection, Introspected introspected, String[] columnNames) throws SQLException {
-        String sql = CachingSqlGenerator.createStatementForUpdateSql(introspected.getTableName(), introspected.getIdColumnNames(), columnNames);
+        String sql = CachingSqlGenerator.createSqlForUpdate(introspected.getTableName(), introspected.getIdColumnNames(), columnNames);
         return connection.prepareStatement(sql);
     }
 

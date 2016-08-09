@@ -41,7 +41,6 @@ public class SqlGeneratorTest {
     public void getColumnsCsv(){
         Introspected introspected = Introspector.getIntrospected(PurchaseOrder.class);
 
-        String tableName = introspected.getTableName();
         String[] columnNames = introspected.getColumnNames();
         String[] columnTableNames = introspected.getColumnTableNames();
 

@@ -68,15 +68,6 @@ public final class CachingSqlGenerator {
         return sql;
     }
 
-    public static String createStatementForUpdateSql(String tableName, String[] idColumnNames, String[] columnNames) {
-        String sql = updateStatementCache.get(tableName);
-        if (sql == null) {
-            sql = SqlGenerator.createStatementForUpdateSql(tableName, idColumnNames, columnNames);
-            updateStatementCache.put(tableName, sql);
-        }
-        return sql;
-    }
-
     public static String createSqlForInsert(String tableName, String[] columns) {
         String sql = createStatementCache.get(tableName);
         if (sql == null) {

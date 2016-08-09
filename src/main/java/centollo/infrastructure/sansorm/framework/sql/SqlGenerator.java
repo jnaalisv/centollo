@@ -117,24 +117,6 @@ public final class SqlGenerator {
         return sqlSB.toString();
     }
 
-    public static String createStatementForUpdateSql(String tableName, String[] idColumnNames, String[] columnNames) {
-        StringBuilder sqlSB = new StringBuilder("UPDATE ").append(tableName).append(" SET ");
-        for (String column : columnNames) {
-            sqlSB.append(column).append("=?,");
-        }
-        sqlSB.deleteCharAt(sqlSB.length() - 1);
-
-        if (idColumnNames.length > 0) {
-            sqlSB.append(" WHERE ");
-            for (String column : idColumnNames) {
-                sqlSB.append(column).append("=? AND ");
-            }
-            sqlSB.setLength(sqlSB.length() - 5);
-        }
-
-        return sqlSB.toString();
-    }
-
     public static String createSqlForInsert(String tableName, String[] columns) {
         StringBuilder sqlSB = new StringBuilder("INSERT INTO ").append(tableName).append('(');
         StringBuilder sqlValues = new StringBuilder(") VALUES (");
