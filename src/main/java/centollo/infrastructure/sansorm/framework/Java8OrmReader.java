@@ -20,8 +20,6 @@ import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 
-import static centollo.infrastructure.sansorm.framework.introspection.Introspector.getIntrospected;
-
 public class Java8OrmReader extends Java8OrmBase {
     private static <T> List<T> statementToList(PreparedStatement stmt, Class<T> clazz, Object... args) throws SQLException {
         try {
@@ -41,7 +39,7 @@ public class Java8OrmReader extends Java8OrmBase {
             return list;
         }
 
-        Introspected introspected = getIntrospected(targetClass);
+        Introspected introspected = Introspector.getIntrospected(targetClass);
         final boolean hasJoinColumns = introspected.hasSelfJoinColumn();
         Map<T, Object> deferredSelfJoinFkMap = (hasJoinColumns ? new HashMap<>() : null);
         Map<Object, T> idToTargetMap = (hasJoinColumns ? new HashMap<>() : null);
@@ -124,7 +122,7 @@ public class Java8OrmReader extends Java8OrmBase {
     private static <T> T resultSetToObject(ResultSet resultSet, T target, Set<String> ignoredColumns) throws SQLException {
         ResultSetMetaData metaData = resultSet.getMetaData();
 
-        Introspected introspected = getIntrospected(target.getClass());
+        Introspected introspected = Introspector.getIntrospected(target.getClass());
         for (int column = metaData.getColumnCount(); column > 0; column--) {
             String columnName = metaData.getColumnName(column).toLowerCase();
             if (ignoredColumns.contains(columnName)) {
@@ -151,7 +149,7 @@ public class Java8OrmReader extends Java8OrmBase {
     }
 
     public static <T> Optional<T> objectById(Connection connection, Class<T> clazz, Object... args) throws SQLException {
-        String whereSql = SqlGenerator.objectByIdSql(getIntrospected(clazz).getIdColumnNames());
+        String whereSql = SqlGenerator.objectByIdSql(Introspector.getIntrospected(clazz).getIdColumnNames());
 
         return objectFromClause(connection, clazz, whereSql, args);
     }
@@ -188,7 +186,7 @@ public class Java8OrmReader extends Java8OrmBase {
 
     public static <T> int countObjectsFromClause(Connection connection, Class<T> clazz, String clause, Object... args) throws SQLException {
 
-        Introspected introspected = getIntrospected(clazz);
+        Introspected introspected = Introspector.getIntrospected(clazz);
 
         String sql = SqlGenerator.countObjectsFromClauseSql(introspected.getTableName(), introspected.getIdColumnNames(), introspected.getColumnNames(), clause);
 
