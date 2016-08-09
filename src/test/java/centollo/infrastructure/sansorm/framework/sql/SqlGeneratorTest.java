@@ -1,8 +1,7 @@
-package centollo.infrastructure.sansorm.framework;
+package centollo.infrastructure.sansorm.framework.sql;
 
 import centollo.infrastructure.sansorm.framework.introspection.Introspected;
 import centollo.infrastructure.sansorm.framework.introspection.Introspector;
-import centollo.infrastructure.sansorm.framework.sql.SqlGenerator;
 import centollo.model.domain.PurchaseOrder;
 import org.junit.Test;
 
