@@ -2,6 +2,7 @@ package centollo.infrastructure.sansorm.framework;
 
 import centollo.infrastructure.sansorm.framework.introspection.Introspected;
 import centollo.infrastructure.sansorm.framework.introspection.Introspector;
+import centollo.infrastructure.sansorm.framework.sql.CachingSqlGenerator;
 import centollo.infrastructure.sansorm.framework.sql.SqlGenerator;
 
 import java.sql.Connection;
@@ -162,7 +163,7 @@ public class Java8OrmReader extends Java8OrmBase {
         String[] columnNames = introspected.getColumnNames();
         String[] columnTableNames = introspected.getColumnTableNames();
 
-        String sql = SqlGenerator.selectFromClauseSql(tableName, columnNames, columnTableNames, clause);
+        String sql = CachingSqlGenerator.selectFromClauseSql(tableName, columnNames, columnTableNames, clause);
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         List<T> list = statementToList(stmt, clazz, args);
@@ -178,7 +179,7 @@ public class Java8OrmReader extends Java8OrmBase {
         String[] columnNames = introspected.getColumnNames();
         String[] columnTableNames = introspected.getColumnTableNames();
 
-        String sql = SqlGenerator.selectFromClauseSql(tableName, columnNames, columnTableNames, clause);
+        String sql = CachingSqlGenerator.selectFromClauseSql(tableName, columnNames, columnTableNames, clause);
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 

@@ -45,7 +45,7 @@ public class SqlGeneratorTest {
         String[] columnNames = introspected.getColumnNames();
         String[] columnTableNames = introspected.getColumnTableNames();
 
-        String sql = SqlGenerator.getColumnsCsv(tableName, columnNames, columnTableNames, "order");
+        String sql = SqlGenerator.getColumnsCsv(columnNames, columnTableNames, "order");
         assertThat(sql).isEqualTo("order.id,order.version,order.lastmodified,order.orderitems");
 
     }

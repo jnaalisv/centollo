@@ -3,6 +3,7 @@ package centollo.infrastructure.sansorm.framework;
 
 import centollo.infrastructure.sansorm.framework.introspection.Introspected;
 import centollo.infrastructure.sansorm.framework.introspection.Introspector;
+import centollo.infrastructure.sansorm.framework.sql.CachingSqlGenerator;
 import centollo.infrastructure.sansorm.framework.sql.SqlGenerator;
 
 import java.sql.Connection;
@@ -155,7 +156,7 @@ public class Java8OrmWriter extends Java8OrmBase {
     }
 
     private static PreparedStatement createStatementForUpdate(Connection connection, Introspected introspected, String[] columnNames) throws SQLException {
-        String sql = SqlGenerator.createStatementForUpdateSql(introspected.getTableName(), introspected.getIdColumnNames(), columnNames);
+        String sql = CachingSqlGenerator.createStatementForUpdateSql(introspected.getTableName(), introspected.getIdColumnNames(), columnNames);
         return connection.prepareStatement(sql);
     }
 
@@ -171,7 +172,7 @@ public class Java8OrmWriter extends Java8OrmBase {
     }
 
     private static PreparedStatement createStatementForInsert(Connection connection, Introspected introspected, String[] columns) throws SQLException {
-        String sql = SqlGenerator.createSqlForInsert(introspected.getTableName(), columns);
+        String sql = CachingSqlGenerator.createSqlForInsert(introspected.getTableName(), columns);
         if (introspected.hasGeneratedId()) {
             return connection.prepareStatement(sql, introspected.getIdColumnNames());
         } else {
@@ -184,7 +185,7 @@ public class Java8OrmWriter extends Java8OrmBase {
         Introspected introspected = Introspector.getIntrospected(clazz);
         String[] columnNames = introspected.getUpdatableColumns();
 
-        String sql = SqlGenerator.createSqlForUpdate(introspected.getTableName(), introspected.getIdColumnNames(), columnNames);
+        String sql = CachingSqlGenerator.createSqlForUpdate(introspected.getTableName(), introspected.getIdColumnNames(), columnNames);
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
