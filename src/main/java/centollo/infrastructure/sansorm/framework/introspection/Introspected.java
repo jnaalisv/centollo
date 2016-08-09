@@ -1,4 +1,4 @@
-package centollo.infrastructure.sansorm.framework;
+package centollo.infrastructure.sansorm.framework.introspection;
 
 import javax.persistence.Column;
 import javax.persistence.EnumType;

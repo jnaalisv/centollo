@@ -1,4 +1,4 @@
-package centollo.infrastructure.sansorm.framework;
+package centollo.infrastructure.sansorm.framework.introspection;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
