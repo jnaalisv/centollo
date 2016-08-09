@@ -25,7 +25,10 @@ public class SqlGeneratorTest {
 
         String sql = SqlGenerator.selectFromClauseSql(tableName, columnNames, columnTableNames, "id = ?");
 
-        assertThat(sql).isEqualTo("SELECT purchase_order.id,purchase_order.version,purchase_order.lastmodified,purchase_order.orderitems FROM purchase_order purchase_order WHERE  id = ?");
+        assertThat(sql).isEqualTo(
+                "SELECT purchase_order.id,purchase_order.version,purchase_order.lastmodified,purchase_order.orderitems " +
+                "FROM purchase_order purchase_order " +
+                "WHERE  id = ?");
     }
 
     @Test
