@@ -26,7 +26,7 @@ public class SqlGeneratorTest {
         String sql = SqlGenerator.selectFromClauseSql(tableName, columnNames, columnTableNames, "id = ?");
 
         assertThat(sql).isEqualTo(
-                "SELECT purchase_order.id,purchase_order.version,purchase_order.lastmodified,purchase_order.orderitems " +
+                "SELECT purchase_order.id,purchase_order.version,purchase_order.lastmodified " +
                 "FROM purchase_order purchase_order " +
                 "WHERE  id = ?");
     }
@@ -48,7 +48,7 @@ public class SqlGeneratorTest {
         String[] columnTableNames = introspected.getColumnTableNames();
 
         String sql = SqlGenerator.getColumnsCsv(columnNames, columnTableNames, "order");
-        assertThat(sql).isEqualTo("order.id,order.version,order.lastmodified,order.orderitems");
+        assertThat(sql).isEqualTo("order.id,order.version,order.lastmodified");
 
     }
 
@@ -59,7 +59,7 @@ public class SqlGeneratorTest {
         String[] columnTableNames = introspected.getColumnTableNames();
 
         String sql = SqlGenerator.getColumnsCsvExclude(columnNames, columnTableNames, "order");
-        assertThat(sql).isEqualTo("id,version,lastmodified,orderitems");
+        assertThat(sql).isEqualTo("id,version,lastmodified");
 
     }
 
@@ -73,7 +73,7 @@ public class SqlGeneratorTest {
         String[] columnNames = introspected.getColumnNames();
 
         String sql = SqlGenerator.createSqlForUpdate(tableName, idColumnNames, columnNames);
-        assertThat(sql).isEqualTo("UPDATE purchase_order SET id=?,version=?,lastmodified=?,orderitems=? WHERE id=? AND version =?");
+        assertThat(sql).isEqualTo("UPDATE purchase_order SET id=?,version=?,lastmodified=? WHERE id=? AND version =?");
 
     }
 
@@ -85,7 +85,7 @@ public class SqlGeneratorTest {
         String[] columnNames = introspected.getColumnNames();
 
         String sql = SqlGenerator.createSqlForInsert(tableName, columnNames);
-        assertThat(sql).isEqualTo("INSERT INTO purchase_order(id,version,lastmodified,orderitems) VALUES (?,?,?,?)");
+        assertThat(sql).isEqualTo("INSERT INTO purchase_order(id,version,lastmodified) VALUES (?,?,?)");
 
     }
 

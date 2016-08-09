@@ -6,6 +6,8 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.io.IOException;
@@ -30,7 +32,7 @@ public class Introspected {
     private Class<?> clazz;
     private String tableName;
 
-    private Map<String, FieldColumnInfo> columnToField;
+    private Map<String, FieldColumnInfo> columnToField = new LinkedHashMap<>();
 
     private FieldColumnInfo selfJoinFCInfo;
 
@@ -45,11 +47,7 @@ public class Introspected {
 
     private String[] insertableColumns;
     private String[] updatableColumns;
-    
-    // Instance initializer
-    {
-        columnToField = new LinkedHashMap<String, FieldColumnInfo>();
-    }
+    private String[] oneToManyColumnNames;
 
     Introspected(Class<?> clazz) {
         this.clazz = clazz;
@@ -60,7 +58,7 @@ public class Introspected {
         }
 
         try {
-            ArrayList<FieldColumnInfo> idFcInfos = new ArrayList<Introspected.FieldColumnInfo>();
+            ArrayList<FieldColumnInfo> idFcInfos = new ArrayList<>();
 
             for (Field field : clazz.getDeclaredFields()) {
                 int modifiers = field.getModifiers();
@@ -330,8 +328,28 @@ public class Introspected {
     private void processColumnAnnotation(FieldColumnInfo fcInfo) {
         Field field = fcInfo.field;
 
+        Transient transientAnnotation = field.getAnnotation(Transient.class);
+
+        if (transientAnnotation != null) {
+            return;
+        }
+
         Column columnAnnotation = field.getAnnotation(Column.class);
-        if (columnAnnotation != null) {
+
+        JoinColumn joinColumnAnnotation = field.getAnnotation(JoinColumn.class);
+
+        OneToMany oneToManyAnnotation = field.getAnnotation(OneToMany.class);
+
+        ManyToOne manyToOneAnnotation = field.getAnnotation(ManyToOne.class);
+
+        if (oneToManyAnnotation != null) {
+//
+//            fcInfo.columnName = field.getName().toLowerCase();
+//            fcInfo.insertable = false;
+//            fcInfo.updatable = false;
+            return;
+
+        } else if (columnAnnotation != null) {
             fcInfo.columnName = columnAnnotation.name().toLowerCase();
             String columnTableName = columnAnnotation.table();
             if (columnTableName != null && columnTableName.length() > 0) {
@@ -342,28 +360,24 @@ public class Introspected {
             fcInfo.updatable = columnAnnotation.updatable();
         }
         else {
-            // If there is no Column annotation, is there a JoinColumn annotation?
-            JoinColumn joinColumnAnnotation = field.getAnnotation(JoinColumn.class);
-            if (joinColumnAnnotation != null) {
-                // Is the JoinColumn a self-join?
-                if (field.getType() == clazz) {
-                    fcInfo.columnName = joinColumnAnnotation.name().toLowerCase();
-                    selfJoinFCInfo = fcInfo;
-                }
-                else {
-                    throw new RuntimeException("JoinColumn annotations can only be self-referencing: " + field.getType().getCanonicalName() + " != "
-                            + clazz.getCanonicalName());
-                }
-            }
-            else {
+//            if (joinColumnAnnotation != null) {
+//                // Is the JoinColumn a self-join?
+//                if (field.getType() == clazz) {
+//                    fcInfo.columnName = joinColumnAnnotation.name().toLowerCase();
+//                    selfJoinFCInfo = fcInfo;
+//                }
+//                else {
+//                    throw new RuntimeException("JoinColumn annotations can only be self-referencing: " + field.getType().getCanonicalName() + " != "
+//                            + clazz.getCanonicalName());
+//                }
+//            }
+//            else {
                 fcInfo.columnName = field.getName().toLowerCase();
-            }
+//            }
         }
 
-        Transient transientAnnotation = field.getAnnotation(Transient.class);
-        if (transientAnnotation == null) {
-            columnToField.put(fcInfo.columnName, fcInfo);
-        }
+
+        columnToField.put(fcInfo.columnName, fcInfo);
     }
 
     private static class FieldColumnInfo {
