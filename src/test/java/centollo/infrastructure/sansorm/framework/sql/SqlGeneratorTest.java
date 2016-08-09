@@ -59,4 +59,55 @@ public class SqlGeneratorTest {
         assertThat(sql).isEqualTo("id,version,lastmodified,orderitems");
 
     }
+
+
+    @Test
+    public void createSqlForUpdate(){
+        Introspected introspected = Introspector.getIntrospected(PurchaseOrder.class);
+
+        String tableName = introspected.getTableName();
+        String[] idColumnNames = introspected.getIdColumnNames();
+        String[] columnNames = introspected.getColumnNames();
+
+        String sql = SqlGenerator.createSqlForUpdate(tableName, idColumnNames, columnNames);
+        assertThat(sql).isEqualTo("UPDATE purchase_order SET id=?,version=?,lastmodified=?,orderitems=? WHERE id=? AND version =?");
+
+    }
+
+    @Test
+    public void createSqlForInsert(){
+        Introspected introspected = Introspector.getIntrospected(PurchaseOrder.class);
+
+        String tableName = introspected.getTableName();
+        String[] columnNames = introspected.getColumnNames();
+
+        String sql = SqlGenerator.createSqlForInsert(tableName, columnNames);
+        assertThat(sql).isEqualTo("INSERT INTO purchase_order(id,version,lastmodified,orderitems) VALUES (?,?,?,?)");
+
+    }
+
+    @Test
+    public void deleteObjectByIdSql(){
+        Introspected introspected = Introspector.getIntrospected(PurchaseOrder.class);
+
+        String tableName = introspected.getTableName();
+        String[] idColumnNames = introspected.getIdColumnNames();
+
+        String sql = SqlGenerator.deleteObjectByIdSql(tableName, idColumnNames);
+        assertThat(sql).isEqualTo("DELETE FROM purchase_order WHERE id=?");
+
+    }
+
+    @Test
+    public void selfJoinSql(){
+        Introspected introspected = Introspector.getIntrospected(PurchaseOrder.class);
+
+        String selfJoinColumn = introspected.getSelfJoinColumn();
+        String tableName = introspected.getTableName();
+        String[] idColumnNames = introspected.getIdColumnNames();
+
+        String sql = SqlGenerator.selfJoinSql(selfJoinColumn, tableName, idColumnNames[0]);
+        assertThat(sql).isEqualTo("UPDATE purchase_order SET null=? WHERE id=?");
+
+    }
 }
