@@ -14,7 +14,7 @@ import javax.inject.Inject;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-@Sql({"classpath:products.sql"})
+@Sql({"classpath:products.sql", "classpath:purchase-order.sql"})
 @ContextConfiguration(classes = {SansOrmConfig.class })
 @RunWith(SpringJUnit4ClassRunner.class)
 public class Java8OrmReaderTest {

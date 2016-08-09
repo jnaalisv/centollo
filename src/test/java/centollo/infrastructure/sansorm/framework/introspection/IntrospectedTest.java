@@ -24,6 +24,24 @@ public class IntrospectedTest {
     @Test
     public void getColumnNames() {
         String[] columnNames = introspected.getColumnNames();
-        assertThat(columnNames).contains("id", "version", "lastmodified", "orderitems");
+        assertThat(columnNames).containsExactly("id", "version", "lastmodified");
+    }
+
+    @Test
+    public void getInsertableColumns() {
+        String[] columnNames = introspected.getInsertableColumns();
+        assertThat(columnNames).containsExactly("version", "lastmodified");
+    }
+
+    @Test
+    public void getUpdatableColumns() {
+        String[] columnNames = introspected.getUpdatableColumns();
+        assertThat(columnNames).containsExactly("version", "lastmodified");
+    }
+
+    @Test
+    public void getColumnTableNames() {
+        String[] columnNames = introspected.getColumnTableNames();
+        assertThat(columnNames).containsExactly(null, null, null);
     }
 }
