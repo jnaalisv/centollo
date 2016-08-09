@@ -28,7 +28,6 @@ public abstract class AbstractOrdersApiTest extends AbstractWebApiTest {
                 .expect200()
                 .responseBodyAs(ProductDTO.class);
 
-
         OrderItemDTO konaOrderItem = new OrderItemDTO(kona.productCode, 5);
         OrderItemDTO javaOrderItem = new OrderItemDTO(java.productCode, 1);
 

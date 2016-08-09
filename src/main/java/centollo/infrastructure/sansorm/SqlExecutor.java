@@ -34,6 +34,10 @@ public class SqlExecutor {
         return execute(connection -> Java8OrmWriter.insertObject(connection, object));
     }
 
+    public <T> int[] insertObjectBatched(Iterable<T> iterable) {
+        return execute(connection -> Java8OrmWriter.insertListBatched(connection, iterable));
+    }
+
     public <T> T updateObject(T object) {
         return execute(connection -> Java8OrmWriter.updateObject(connection, object));
     }
