@@ -109,8 +109,7 @@ class Java8OrmBase {
             case Types.TIMESTAMP:
                 if (object instanceof java.util.Date) {
                     return new Timestamp(((java.util.Date) object).getTime());
-                }
-                if (object instanceof java.time.LocalDateTime) {
+                } else if (object instanceof java.time.LocalDateTime) {
                     LocalDateTime localDateTime = (LocalDateTime) object;
                     return Timestamp.valueOf(localDateTime);
                 }
