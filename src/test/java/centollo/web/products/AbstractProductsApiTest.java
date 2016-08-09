@@ -5,6 +5,7 @@ import centollo.model.domain.ProductType;
 import centollo.web.AbstractWebApiTest;
 import centollo.web.config.WebConfiguration;
 import centollo.web.interfaces.ProductDTO;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -17,6 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @ContextConfiguration(classes = {ModelConfiguration.class, WebConfiguration.class })
 public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
 
+    @Ignore
     @Test
     public void shouldFindProductsByExactName() {
         List<ProductDTO> products = httpGet("/products?query=Java")
@@ -33,6 +35,7 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
         assertThat(java.productType).isEqualTo(ProductType.BEANS);
     }
 
+    @Ignore
     @Test
     public void shouldNotFindAnythingWithInvalidName() {
         List<ProductDTO> products = httpGet("/products?query=tea")
@@ -43,6 +46,7 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
         assertThat(products.size()).isEqualTo(0);
     }
 
+    @Ignore
     @Test
     public void shouldFindWithPartialName() {
         List<ProductDTO> products = httpGet("/products?query=a")
@@ -61,6 +65,7 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
         );
     }
 
+    @Ignore
     @Test
     public void shouldFindByProductCode() {
         ProductDTO kona = httpGet("/products/K2")
@@ -72,6 +77,7 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
         assertThat(kona.productType).isEqualTo(ProductType.BEANS);
     }
 
+    @Ignore
     @Test
     public void shouldReturn404OnProductNotFound() {
         httpGet("/products/nope!")
@@ -79,6 +85,7 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
                 .expect404();
     }
 
+    @Ignore
     @Test
     public void shouldAddANewProduct() {
 
@@ -96,6 +103,7 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
         assertThat(aNewProduct.productType).isEqualTo(postedProduct.productType);
     }
 
+    @Ignore
     @Test
     public void shouldUpdateAProduct() {
         ProductDTO compakE8 = httpGet("/products/CE8")
@@ -127,6 +135,7 @@ public abstract class AbstractProductsApiTest extends AbstractWebApiTest {
         assertThat(updatedProduct.productType).isEqualTo(ProductType.BEANS);
     }
 
+    @Ignore
     @Test
     public void assertOptimisticLocking() {
 

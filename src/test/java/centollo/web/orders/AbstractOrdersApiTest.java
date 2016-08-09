@@ -6,6 +6,7 @@ import centollo.web.config.WebConfiguration;
 import centollo.web.interfaces.OrderDTO;
 import centollo.web.interfaces.OrderItemDTO;
 import centollo.web.interfaces.ProductDTO;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -16,6 +17,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ContextConfiguration(classes = {ModelConfiguration.class, WebConfiguration.class })
 public abstract class AbstractOrdersApiTest extends AbstractWebApiTest {
 
+    @Ignore
     @Test
     public void shouldPostSimpleOrder() {
         ProductDTO kona = httpGet("/products/K2")

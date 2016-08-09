@@ -1,9 +1,6 @@
 
 package centollo.infrastructure.sansorm.framework;
 
-import com.zaxxer.sansorm.internal.Introspected;
-import com.zaxxer.sansorm.internal.Introspector;
-
 import java.sql.Connection;
 import java.sql.ParameterMetaData;
 import java.sql.PreparedStatement;
