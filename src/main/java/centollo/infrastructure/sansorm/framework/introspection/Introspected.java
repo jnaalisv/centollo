@@ -343,12 +343,7 @@ public class Introspected {
         ManyToOne manyToOneAnnotation = field.getAnnotation(ManyToOne.class);
 
         if (oneToManyAnnotation != null) {
-//
-//            fcInfo.columnName = field.getName().toLowerCase();
-//            fcInfo.insertable = false;
-//            fcInfo.updatable = false;
             return;
-
         } else if (columnAnnotation != null) {
             fcInfo.columnName = columnAnnotation.name().toLowerCase();
             String columnTableName = columnAnnotation.table();
@@ -359,21 +354,13 @@ public class Introspected {
             fcInfo.insertable = columnAnnotation.insertable();
             fcInfo.updatable = columnAnnotation.updatable();
         }
-        else {
-//            if (joinColumnAnnotation != null) {
-//                // Is the JoinColumn a self-join?
-//                if (field.getType() == clazz) {
-//                    fcInfo.columnName = joinColumnAnnotation.name().toLowerCase();
-//                    selfJoinFCInfo = fcInfo;
-//                }
-//                else {
-//                    throw new RuntimeException("JoinColumn annotations can only be self-referencing: " + field.getType().getCanonicalName() + " != "
-//                            + clazz.getCanonicalName());
-//                }
-//            }
-//            else {
-                fcInfo.columnName = field.getName().toLowerCase();
-//            }
+        else if (joinColumnAnnotation != null) {
+            fcInfo.columnName = joinColumnAnnotation.name().toLowerCase();
+            fcInfo.insertable = true;
+            fcInfo.updatable = false;
+
+        } else {
+            fcInfo.columnName = field.getName().toLowerCase();
         }
 
 

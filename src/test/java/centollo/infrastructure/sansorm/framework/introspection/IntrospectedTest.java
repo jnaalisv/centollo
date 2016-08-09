@@ -1,5 +1,6 @@
 package centollo.infrastructure.sansorm.framework.introspection;
 
+import centollo.model.domain.OrderItem;
 import centollo.model.domain.PurchaseOrder;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,5 +44,19 @@ public class IntrospectedTest {
     public void getColumnTableNames() {
         String[] columnNames = introspected.getColumnTableNames();
         assertThat(columnNames).containsExactly(null, null, null);
+    }
+
+    @Test
+    public void joinColumnTest() {
+        Introspected withJoinColumn = Introspector.getIntrospected(OrderItem.class);
+
+        String[] columnNames = withJoinColumn.getColumnNames();
+        assertThat(columnNames).containsExactly("id", "productcode", "order_id", "itemcount");
+
+        String[] insertableColumns = withJoinColumn.getInsertableColumns();
+        assertThat(insertableColumns).containsExactly("productcode", "order_id", "itemcount");
+
+        String[] updatableColumns = withJoinColumn.getUpdatableColumns();
+        assertThat(updatableColumns).containsExactly("productcode", "itemcount");
     }
 }
