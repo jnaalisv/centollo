@@ -1,5 +1,6 @@
 package centollo.infrastructure.sansorm.framework;
 
+import centollo.model.domain.PurchaseOrder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,12 @@ abstract class Java8OrmBase {
                 if (object instanceof java.time.LocalDateTime) {
                     LocalDateTime localDateTime = (LocalDateTime) object;
                     return Timestamp.valueOf(localDateTime);
+                }
+                break;
+
+            case Types.INTEGER:
+                if (object instanceof PurchaseOrder) {
+                    return ((PurchaseOrder) object).getId();
                 }
                 break;
 
