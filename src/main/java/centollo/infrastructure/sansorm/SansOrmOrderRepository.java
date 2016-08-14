@@ -1,12 +1,14 @@
 package centollo.infrastructure.sansorm;
 
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import org.springframework.stereotype.Repository;
+
 import centollo.model.domain.OrderItem;
 import centollo.model.domain.OrderRepository;
 import centollo.model.domain.PurchaseOrder;
-import org.springframework.stereotype.Repository;
-
-import javax.inject.Inject;
-import java.util.Optional;
 
 @Repository
 public class SansOrmOrderRepository implements OrderRepository {
@@ -22,8 +24,11 @@ public class SansOrmOrderRepository implements OrderRepository {
     @Override
     public void add(PurchaseOrder order) {
         sqlExecutor.insertObject(order);
-        order.getOrderItems().forEach(oe -> oe.setOrder(order));
 
+        // 1. set ManyToOne references
+        order.getOrderItems().forEach(orderItem -> orderItem.setOrder(order));
+
+        // 2. insert each object separately
         order.getOrderItems().forEach(sqlExecutor::insertObject);
     }
 
@@ -34,6 +39,8 @@ public class SansOrmOrderRepository implements OrderRepository {
 
         if (maybePurchaseOrder.isPresent()) {
             PurchaseOrder purchaseOrder = maybePurchaseOrder.get();
+
+            // populate OneToMany-collection
             purchaseOrder.getOrderItems().addAll(sqlExecutor.listFromClause(OrderItem.class, "order_id =?", purchaseOrder.getId()));
         }
 

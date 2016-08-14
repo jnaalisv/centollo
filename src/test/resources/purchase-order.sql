@@ -1,4 +1,4 @@
-delete from order_item;
+delete from ORDER_ITEM;
 delete from purchase_order;
 
 insert

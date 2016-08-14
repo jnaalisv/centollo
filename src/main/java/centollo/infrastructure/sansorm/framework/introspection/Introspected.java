@@ -1,15 +1,5 @@
 package centollo.infrastructure.sansorm.framework.introspection;
 
-import javax.persistence.Column;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.io.IOException;
 import java.io.Reader;
 import java.lang.reflect.Field;
@@ -27,6 +17,19 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.persistence.Column;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+
+import centollo.model.domain.PurchaseOrder;
 
 public class Introspected {
     private Class<?> clazz;
@@ -151,6 +154,10 @@ public class Introspected {
                 }
                 else if (columnValue instanceof Clob) {
                     columnValue = readClob((Clob) columnValue);
+                }
+                else if (fieldType == PurchaseOrder.class) {
+                    System.out.println("skipping purhcase order type, dirty hack");
+                    return;
                 }
             }
 
