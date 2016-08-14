@@ -29,8 +29,6 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import centollo.model.domain.PurchaseOrder;
-
 public class Introspected {
     private Class<?> clazz;
     private String tableName;
@@ -133,6 +131,11 @@ public class Introspected {
             Class<?> columnType = value.getClass();
             Object columnValue = value;
 
+            ManyToOne manyToOne = fcInfo.field.getAnnotation(ManyToOne.class);
+            if (manyToOne != null) {
+                return;
+            }
+
             if (fieldType != columnType) {
                 // Fix-up column value for enums, integer as boolean, etc.
                 if (fieldType == boolean.class && columnType == Integer.class) {
@@ -154,10 +157,6 @@ public class Introspected {
                 }
                 else if (columnValue instanceof Clob) {
                     columnValue = readClob((Clob) columnValue);
-                }
-                else if (fieldType == PurchaseOrder.class) {
-                    System.out.println("skipping purhcase order type, dirty hack");
-                    return;
                 }
             }
 
