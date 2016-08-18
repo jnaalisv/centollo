@@ -1,7 +1,9 @@
 package centollo.infrastructure.sansorm.framework;
 
-import com.zaxxer.sansorm.internal.Introspected;
-import com.zaxxer.sansorm.internal.Introspector;
+import centollo.infrastructure.sansorm.framework.introspection.Introspected;
+import centollo.infrastructure.sansorm.framework.introspection.Introspector;
+import centollo.infrastructure.sansorm.framework.sql.CachingSqlGenerator;
+import centollo.infrastructure.sansorm.framework.sql.SqlGenerator;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +14,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -20,22 +21,6 @@ import java.util.Optional;
 import java.util.Set;
 
 public class Java8OrmReader extends Java8OrmBase {
-    private static final int CACHE_SIZE = Integer.getInteger("centollo.infrastructure.sansorm.framework.statementCacheSize", 500);
-
-    private static final Map<String, String> fromClauseStmtCache;
-
-    static {
-        fromClauseStmtCache = Collections.synchronizedMap(new LinkedHashMap<String, String>(CACHE_SIZE) {
-            private static final long serialVersionUID = 6259942586093454872L;
-
-            @Override
-            protected boolean removeEldestEntry(Entry<String, String> eldest)
-            {
-                return this.size() > CACHE_SIZE;
-            }
-        });
-    }
-
     private static <T> List<T> statementToList(PreparedStatement stmt, Class<T> clazz, Object... args) throws SQLException {
         try {
             populateStatementParameters(stmt, args);
@@ -164,24 +149,19 @@ public class Java8OrmReader extends Java8OrmBase {
     }
 
     public static <T> Optional<T> objectById(Connection connection, Class<T> clazz, Object... args) throws SQLException {
-        Introspected introspected = Introspector.getIntrospected(clazz);
+        String whereSql = SqlGenerator.objectByIdSql(Introspector.getIntrospected(clazz).getIdColumnNames());
 
-        StringBuilder where = new StringBuilder();
-        for (String column : introspected.getIdColumnNames()) {
-            where.append(column).append("=? AND ");
-        }
-
-        // the where clause can be length of zero if we are loading an object that is presumed to 
-        // be the only row in the table and therefore has no id.
-        if (where.length() > 0) {
-            where.setLength(where.length() - 5);
-        }
-
-        return objectFromClause(connection, clazz, where.toString(), args);
+        return objectFromClause(connection, clazz, whereSql, args);
     }
 
     public static <T> List<T> listFromClause(Connection connection, Class<T> clazz, String clause, Object... args) throws SQLException {
-        String sql = generateSelectFromClause(clazz, clause);
+        Introspected introspected = Introspector.getIntrospected(clazz);
+
+        String tableName = introspected.getTableName();
+        String[] columnNames = introspected.getColumnNames();
+        String[] columnTableNames = introspected.getColumnTableNames();
+
+        String sql = CachingSqlGenerator.selectFromClauseSql(tableName, columnNames, columnTableNames, clause);
 
         PreparedStatement stmt = connection.prepareStatement(sql);
         List<T> list = statementToList(stmt, clazz, args);
@@ -191,7 +171,13 @@ public class Java8OrmReader extends Java8OrmBase {
     }
 
     public static <T> Optional<T> objectFromClause(Connection connection, Class<T> clazz, String clause, Object... args) throws SQLException {
-        String sql = generateSelectFromClause(clazz, clause);
+        Introspected introspected = Introspector.getIntrospected(clazz);
+
+        String tableName = introspected.getTableName();
+        String[] columnNames = introspected.getColumnNames();
+        String[] columnTableNames = introspected.getColumnTableNames();
+
+        String sql = CachingSqlGenerator.selectFromClauseSql(tableName, columnNames, columnTableNames, clause);
 
         PreparedStatement stmt = connection.prepareStatement(sql);
 
@@ -199,29 +185,12 @@ public class Java8OrmReader extends Java8OrmBase {
     }
 
     public static <T> int countObjectsFromClause(Connection connection, Class<T> clazz, String clause, Object... args) throws SQLException {
+
         Introspected introspected = Introspector.getIntrospected(clazz);
 
-        String tableName = introspected.getTableName();
+        String sql = SqlGenerator.countObjectsFromClauseSql(introspected.getTableName(), introspected.getIdColumnNames(), introspected.getColumnNames(), clause);
 
-        StringBuilder sql = new StringBuilder();
-        sql.append("SELECT COUNT(");
-        String countColumn = tableName + ".";
-        String[] idColumnNames = introspected.getIdColumnNames();
-        if (idColumnNames.length > 0) {
-            countColumn += idColumnNames[0];
-        }
-        else {
-            countColumn += introspected.getColumnNames()[0];
-        }
-        sql.append(countColumn).append(") FROM ").append(tableName).append(' ').append(tableName);
-        if (clause != null && !clause.isEmpty()) {
-            if (!clause.toUpperCase().contains("WHERE") && !clause.toUpperCase().contains("JOIN")) {
-                sql.append(" WHERE ");
-            }
-            sql.append(' ').append(clause);
-        }
-
-        Optional<Number> maybeNumber = numberFromSql(connection, sql.toString(), args);
+        Optional<Number> maybeNumber = numberFromSql(connection, sql, args);
 
         return maybeNumber.orElse(0).intValue();
     }
@@ -238,30 +207,5 @@ public class Java8OrmReader extends Java8OrmBase {
                 return Optional.empty();
             }
         }
-    }
-
-    private static <T> String generateSelectFromClause(Class<T> clazz, String clause) {
-        String cacheKey = clazz.getName() + clause;
-
-        String sql = fromClauseStmtCache.get(cacheKey);
-        if (sql == null) {
-            Introspected introspected = Introspector.getIntrospected(clazz);
-
-            String tableName = introspected.getTableName();
-
-            StringBuilder sqlSB = new StringBuilder();
-            sqlSB.append("SELECT ").append(getColumnsCsv(clazz, tableName)).append(" FROM ").append(tableName).append(' ').append(tableName);
-            if (clause != null && !clause.isEmpty()) {
-                if (!clause.toUpperCase().contains("WHERE") && !clause.toUpperCase().contains("JOIN")) {
-                    sqlSB.append(" WHERE ");
-                }
-                sqlSB.append(' ').append(clause);
-            }
-
-            sql = sqlSB.toString();
-            fromClauseStmtCache.put(cacheKey, sql);
-        }
-
-        return sql;
     }
 }

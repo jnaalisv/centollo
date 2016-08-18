@@ -4,14 +4,9 @@ appender("STDOUT", ConsoleAppender) {
     }
 }
 
-root(INFO, ["STDOUT"])
+root(WARN, ["STDOUT"])
 
-logger("centollo", INFO)
-logger("org.springframework", INFO)
-logger("org.springframework.jdbc.datasource.DataSourceTransactionManager", INFO)
+logger("centollo", WARN)
+logger("org.springframework", WARN)
 
-logger("org.hibernate", INFO)
-logger("org.springframework.orm.hibernate5.HibernateTransactionManager", INFO)
-
-logger("org.hibernate.tool.hbm2ddl.SchemaExport", INFO)
-logger("org.hibernate.SQL", INFO)
+logger("org.hibernate", WARN)

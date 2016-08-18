@@ -1,4 +1,7 @@
+
+delete from ORDER_ITEM;
 delete from product;
+delete from purchase_order;
 
 insert
 into product(id, productCode, name, productType)
