@@ -4,6 +4,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Version;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 public class Product {
 
     @Id // required by Hibernate
+    @GeneratedValue
+    @Column(name = "id")
     private long id;
 
     @Version

@@ -2,6 +2,7 @@ package centollo.infrastructure.sansorm;
 
 import centollo.model.domain.Product;
 import centollo.model.domain.ProductRepository;
+import org.jnaalisv.sqlmapper.SqlQueries;
 import org.springframework.stereotype.Repository;
 
 import javax.inject.Inject;
@@ -11,30 +12,32 @@ import java.util.Optional;
 @Repository
 public class SansOrmProductRepository implements ProductRepository {
 
-    private final SqlExecutor sqlExecutor;
+    private final SqlQueries sqlQueries;
 
     @Inject
-    public SansOrmProductRepository(final SqlExecutor sqlExecutor) {
-        this.sqlExecutor = sqlExecutor;
+    public SansOrmProductRepository(final SqlQueries sqlQueries) {
+        this.sqlQueries = sqlQueries;
     }
 
     @Override
     public List<Product> searchProducts(String query) {
-        return sqlExecutor.listFromClause(Product.class, "name LIKE ?", "%" + query+"%");
+        return sqlQueries.queryByClause(Product.class, "name LIKE ?", "%" + query+"%");
     }
 
     @Override
     public Optional<Product> findBy(String productCode) {
-        return sqlExecutor.objectFromClause(Product.class, "productCode = ?", productCode);
+        return sqlQueries.queryForOneByClause(Product.class, "productCode = ?", productCode);
     }
 
     @Override
     public void add(Product product) {
-        sqlExecutor.insertObject(product);
+        sqlQueries.insertObject(product);
     }
 
     @Override
     public void update(Product product) {
-        sqlExecutor.updateVersionedObject(product);
+        sqlQueries.updateObject(product);
+
+        //sqlExecutor.updateVersionedObject(product);
     }
 }

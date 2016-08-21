@@ -1,6 +1,7 @@
 package centollo.web.interfaces;
 
 import centollo.model.application.NotFoundException;
+import org.jnaalisv.sqlmapper.internal.VersionConflictException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
@@ -49,6 +50,12 @@ public final class RestErrorHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> handleNotFoundException(NotFoundException ex, HttpServletRequest httpRequest) {
         logBadRequest(httpRequest, ex);
         return new ResponseEntity<>(ex.getMessage(), HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(VersionConflictException.class)
+    public ResponseEntity<String> handleVersionConflictException(VersionConflictException ex, HttpServletRequest httpRequest) {
+        logBadRequest(httpRequest, ex);
+        return new ResponseEntity<>(ex.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(ObjectOptimisticLockingFailureException.class)
