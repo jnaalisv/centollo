@@ -1,17 +1,18 @@
 package centollo.web.products;
 
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
+import java.util.List;
+
+import org.junit.Test;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
+
 import centollo.model.config.ModelConfiguration;
 import centollo.model.domain.ProductType;
 import centollo.web.AbstractWebApiTest;
 import centollo.web.config.WebConfiguration;
 import centollo.web.interfaces.ProductDTO;
-import org.junit.Test;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.jdbc.Sql;
-
-import java.util.List;
-
-import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 
 @Sql({"classpath:products.sql"})
 @ContextConfiguration(classes = {ModelConfiguration.class, WebConfiguration.class })
