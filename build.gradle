@@ -13,32 +13,40 @@ ext {
     hikariCPVersion = "2.6.0"
     slf4jVersion = "1.7.22"
     logbackVersion = "1.1.9"
-    groovyVersion = "2.4.2"
+    groovyVersion = "2.4.3"
     h2Version = "1.4.192"
     junitVersion = "4.12"
     assertJVersion = "3.4.1"
 }
 
 dependencies {
-    compile "org.slf4j:slf4j-api:$slf4jVersion"
-    compile "javax.inject:javax.inject:1"
-    compile "org.springframework:spring-context:$springVersion"
-    compile "org.springframework:spring-orm:$springVersion"
-    compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final"
-    compile "org.hibernate:hibernate-core:$hibernateVersion"
-    compile "org.jooq:jooq:$jooqVersion"
-    compile "com.zaxxer:SansOrm:1.0"
 
-    compile "com.zaxxer:HikariCP:$hikariCPVersion"
+    compile (
+            "org.slf4j:slf4j-api:$slf4jVersion",
+            "javax.inject:javax.inject:1",
+            "org.springframework:spring-context:$springVersion",
+            "org.springframework:spring-orm:$springVersion",
+            "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final",
+            "org.hibernate:hibernate-core:$hibernateVersion",
+            "org.jooq:jooq:$jooqVersion",
+            "com.zaxxer:SansOrm:1.0",
+            "com.zaxxer:HikariCP:$hikariCPVersion"
+    )
 
-    runtime "ch.qos.logback:logback-classic:$logbackVersion"
-    runtime "org.codehaus.groovy:groovy:$groovyVersion"
-    runtime "org.slf4j:jcl-over-slf4j:$slf4jVersion"
-    runtime "com.h2database:h2:$h2Version"
+    runtime (
+            "ch.qos.logback:logback-classic:$logbackVersion",
+            "org.codehaus.groovy:groovy:$groovyVersion",
+            "org.slf4j:jcl-over-slf4j:$slf4jVersion",
+            "org.slf4j:jul-to-slf4j:$slf4jVersion",
+            "org.slf4j:log4j-over-slf4j:$slf4jVersion",
+            "com.h2database:h2:$h2Version"
+    )
 
-    testCompile "junit:junit:$junitVersion"
-    testCompile "org.assertj:assertj-core:$assertJVersion"
-    testCompile "org.springframework:spring-test:$springVersion"
+    testCompile (
+            "junit:junit:$junitVersion",
+            "org.assertj:assertj-core:$assertJVersion",
+            "org.springframework:spring-test:$springVersion"
+    )
 }
 
 wrapper {
