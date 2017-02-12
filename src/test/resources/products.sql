@@ -1,12 +1,12 @@
 delete from product;
 
 insert
-into product(id, productCode, name, productType)
-values(1, 'J1', 'Java', 'BEANS')
-  , (2, 'K2', 'Kona', 'BEANS')
-  , (3, 'H3', 'Harar', 'BEANS')
-  , (4, 'S4', 'Sidamo', 'BEANS')
-  , (5, 'Y5', 'Yirgacheffe', 'BEANS')
-  , (6, 'G6', 'Gesha', 'BEANS')
-  , (7, 'C7', 'Colombian', 'BEANS')
-  , (8, 'CE8', 'Compak E8', 'GRINDERS');
+into product(id, name, productType)
+values(NEXTVAL('hibernate_sequence'), 'Java', 'BEANS')
+  , (NEXTVAL('hibernate_sequence'), 'Kona', 'BEANS')
+  , (NEXTVAL('hibernate_sequence'), 'Harar', 'BEANS')
+  , (NEXTVAL('hibernate_sequence'), 'Sidamo', 'BEANS')
+  , (NEXTVAL('hibernate_sequence'), 'Yirgacheffe', 'BEANS')
+  , (NEXTVAL('hibernate_sequence'), 'Gesha', 'BEANS')
+  , (NEXTVAL('hibernate_sequence'), 'Colombian', 'BEANS')
+  , (NEXTVAL('hibernate_sequence'), 'Compak E8', 'GRINDERS');

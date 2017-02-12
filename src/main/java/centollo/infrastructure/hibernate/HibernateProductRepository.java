@@ -31,14 +31,6 @@ public class HibernateProductRepository implements ProductRepository {
     }
 
     @Override
-    public Optional<Product> findBy(String productCode) {
-        return getCurrentSession()
-                .createQuery("SELECT p FROM Product p where p.productCode = :productCode", Product.class)
-                .setParameter("productCode", productCode)
-                .uniqueResultOptional();
-    }
-
-    @Override
     public void add(Product product) {
         getCurrentSession().save(product);
     }
@@ -46,5 +38,17 @@ public class HibernateProductRepository implements ProductRepository {
     @Override
     public void update(Product product) {
         getCurrentSession().update(product);
+    }
+
+    @Override
+    public Optional<Product> findById(long productId) {
+        return getCurrentSession()
+                .byId(Product.class)
+                .loadOptional(productId);
+    }
+
+    @Override
+    public void delete(Product product) {
+        getCurrentSession().delete(product);
     }
 }

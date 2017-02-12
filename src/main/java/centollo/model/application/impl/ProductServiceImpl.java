@@ -27,14 +27,6 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    public Product findBy(String productCode) {
-        return productRepository
-                .findBy(productCode)
-                .orElseThrow(() -> new NotFoundException(Product.class, productCode));
-    }
-
-    @Override
-    @Transactional
     public void save(Product product) {
         product.setLastModified(LocalDateTime.now());
         productRepository.add(product);
@@ -45,5 +37,19 @@ public class ProductServiceImpl implements ProductService {
     public void update(Product product) {
         product.setLastModified(LocalDateTime.now());
         productRepository.update(product);
+    }
+
+    @Override
+    @Transactional
+    public Product findById(long productId) {
+        return productRepository
+                .findById(productId)
+                .orElseThrow(() -> new NotFoundException(Product.class, "id=" +productId));
+    }
+
+    @Override
+    @Transactional
+    public void delete(Product product) {
+        productRepository.delete(product);
     }
 }

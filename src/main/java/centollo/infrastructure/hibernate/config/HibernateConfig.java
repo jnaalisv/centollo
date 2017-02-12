@@ -18,12 +18,12 @@ import java.util.Properties;
 @Import(DataSourceConfig.class)
 public class HibernateConfig {
 
-    private static final Properties hibernateProperties() {
+    private static Properties hibernateProperties() {
         Properties hibernateProperties = new Properties();
         hibernateProperties.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
         //hibernateProperties.put("hibernate.hbm2ddl.auto","create"); // create ddl when session factory is created
         hibernateProperties.put("hibernate.ejb.naming_strategy", "org.hibernate.cfg.ImprovedNamingStrategy");
-        hibernateProperties.put("hibernate.show_sql","false");
+        hibernateProperties.put("hibernate.generate_statistics", "true");
         hibernateProperties.put("hibernate.format_sql", "true");
         return hibernateProperties;
     }
@@ -32,7 +32,7 @@ public class HibernateConfig {
     public LocalSessionFactoryBean sessionFactory(DataSource dataSource) throws PropertyVetoException {
         LocalSessionFactoryBean sessionFactory = new LocalSessionFactoryBean();
         sessionFactory.setDataSource(dataSource);
-        sessionFactory.setPackagesToScan(new String[] { "centollo.model.domain" });
+        sessionFactory.setPackagesToScan("centollo.model.domain");
         sessionFactory.setHibernateProperties(hibernateProperties());
         return sessionFactory;
     }

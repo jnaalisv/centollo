@@ -4,54 +4,45 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Table;
 import javax.persistence.Version;
 import java.time.LocalDateTime;
 
-@Entity // required by Hibernate
-@Table(name = "product") // required by SansOrm
+@Entity
 public class Product {
 
-    @Id // required by Hibernate
+    @Id
+    @GeneratedValue
     private long id;
 
     @Version
-    @Column(name = "version")
-    private long version = 0l;
+    private long version;
 
-    @Column(name = "lastModified")
+    @Column
     private LocalDateTime lastModified;
 
-    @Column(name = "productCode") // required by SansOrm
-    private String productCode;
-
-    @Column(name = "name") // required by SansOrm
+    @Column
     private String name;
 
-    @Column(name = "productType") // required by SansOrm
-    @Enumerated(EnumType.STRING) // required by Hibernate, SansOrm
+    @Enumerated(EnumType.STRING)
     private ProductType productType;
 
     public Product() { /*hibernate*/}
 
-    public Product(long id, String productCode, String name, ProductType productType) {
+    public Product(long id, String name, ProductType productType) {
         this.id = id;
-        this.productCode = productCode;
+        this.name = name;
+        this.productType = productType;
+    }
+
+    public Product(String name, ProductType productType) {
         this.name = name;
         this.productType = productType;
     }
 
     public String getName() {
         return name;
-    }
-
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public ProductType getProductType() {
-        return productType;
     }
 
     public long getId() {
@@ -72,5 +63,13 @@ public class Product {
 
     public void setLastModified(LocalDateTime lastModified) {
         this.lastModified = lastModified;
+    }
+
+    public ProductType getProductType() {
+        return productType;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }
