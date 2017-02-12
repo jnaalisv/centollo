@@ -1,5 +1,6 @@
-package centollo.infrastructure.config;
+package centollo.infrastructure.hibernate.config;
 
+import centollo.infrastructure.config.DataSourceConfig;
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

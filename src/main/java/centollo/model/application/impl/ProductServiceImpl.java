@@ -7,7 +7,6 @@ import centollo.model.domain.ProductRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.inject.Inject;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -16,7 +15,6 @@ public class ProductServiceImpl implements ProductService {
 
     private final ProductRepository productRepository;
 
-    @Inject
     public ProductServiceImpl(final ProductRepository productRepository) {
         this.productRepository = productRepository;
     }

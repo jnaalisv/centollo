@@ -1,5 +1,6 @@
-package centollo.infrastructure.config;
+package centollo.infrastructure.jooq.config;
 
+import centollo.infrastructure.config.SqlConfig;
 import org.jooq.SQLDialect;
 import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;

@@ -23,13 +23,11 @@ dependencies {
 
     compile (
             "org.slf4j:slf4j-api:$slf4jVersion",
-            "javax.inject:javax.inject:1",
             "org.springframework:spring-context:$springVersion",
             "org.springframework:spring-orm:$springVersion",
             "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final",
             "org.hibernate:hibernate-core:$hibernateVersion",
             "org.jooq:jooq:$jooqVersion",
-            "com.zaxxer:SansOrm:1.0",
             "com.zaxxer:HikariCP:$hikariCPVersion"
     )
 
