@@ -11,7 +11,6 @@ import org.jooq.ResultQuery;
 import org.springframework.orm.ObjectOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
 
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,8 +21,7 @@ import static org.jooq.impl.DSL.table;
 public class JOOQProductRepository implements ProductRepository {
 
     private final DSLContext jooq;
-
-    @Inject
+    
     public JOOQProductRepository(final DSLContext jooq) {
         this.jooq = jooq;
     }
@@ -96,7 +94,7 @@ public class JOOQProductRepository implements ProductRepository {
         if (rowCount == 0) {
             throw new ObjectOptimisticLockingFailureException(Product.class, product.getId());
         }
-        
+
         product.setVersion(nextVersion);
     }
 }

@@ -6,8 +6,6 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.springframework.stereotype.Repository;
 
-import javax.inject.Inject;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,7 +14,6 @@ public class HibernateProductRepository implements ProductRepository {
 
     private final SessionFactory sessionFactory;
 
-    @Inject
     public HibernateProductRepository(final SessionFactory sessionFactory) {
         this.sessionFactory = sessionFactory;
     }
