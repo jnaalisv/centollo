@@ -7,15 +7,14 @@ repositories {
 }
 
 ext {
-    springVersion = "4.3.2.RELEASE"
-    hibernateVersion = "5.2.1.Final"
-    jooqVersion = "3.8.4"
-    hikariCPVersion = "2.4.7"
-    jacksonVersion = "2.8.1"
-    slf4jVersion = "1.7.21"
-    logbackVersion = "1.1.7"
-    groovyVersion = "2.4.1"
-    h2Version = "1.4.191"
+    springVersion = "4.3.6.RELEASE"
+    hibernateVersion = "5.2.7.Final"
+    jooqVersion = "3.9.1"
+    hikariCPVersion = "2.6.0"
+    slf4jVersion = "1.7.22"
+    logbackVersion = "1.1.9"
+    groovyVersion = "2.4.2"
+    h2Version = "1.4.192"
     junitVersion = "4.12"
     assertJVersion = "3.4.1"
 }
@@ -23,10 +22,7 @@ ext {
 dependencies {
     compile "org.slf4j:slf4j-api:$slf4jVersion"
     compile "javax.inject:javax.inject:1"
-    compile "com.fasterxml.jackson.core:jackson-databind:$jacksonVersion"
-    compile "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jacksonVersion"
     compile "org.springframework:spring-context:$springVersion"
-    compile "org.springframework:spring-tx:$springVersion"
     compile "org.springframework:spring-orm:$springVersion"
     compile "org.hibernate.javax.persistence:hibernate-jpa-2.1-api:1.0.0.Final"
     compile "org.hibernate:hibernate-core:$hibernateVersion"
