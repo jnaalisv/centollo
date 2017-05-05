@@ -33,6 +33,13 @@ public class HibernateProductRepository implements ProductRepository {
                 .list();
     }
 
+    public List<Product> nativeSearch(String query) {
+        return getCurrentSession()
+                .createNativeQuery("SELECT p.name, p.id FROM Product p where p.name like :query", Product.class)
+                .setParameter("query", "%"+query + "%")
+                .list();
+    }
+
     @Override
     public Optional<Product> findBy(String productCode) {
         return getCurrentSession()
